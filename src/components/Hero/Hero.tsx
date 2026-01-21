@@ -1,3 +1,5 @@
+import MapMock from "./MapMock";
+
 export default function Hero() {
   return (
     <section className="min-h-screen bg-bg text-textMain grid grid-cols-1 lg:grid-cols-2 items-center px-8 lg:px-24">
