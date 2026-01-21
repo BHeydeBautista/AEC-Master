@@ -1,43 +1,38 @@
+"use client";
+
 import MapMock from "./MapMock";
 
 export default function Hero() {
   return (
-    <section className="min-h-screen bg-bg text-textMain grid grid-cols-1 lg:grid-cols-2 items-center px-8 lg:px-24">
+    <section className="relative min-h-screen overflow-hidden">
+      {/* LAYOUT GENERAL */}
+      <div className="relative z-10 max-w-7xl mx-auto px-10 pt-32">
+        <div className="flex items-start">
+          {/* COLUMNA TEXTO */}
+          <div className="w-[45%]">
+            <div className="max-w-[480px] flex flex-col gap-4">
+              <h1 className="text-[52px] leading-[1.05] font-semibold tracking-tight">
+                <span className="block">All-in-one</span>
+                <span className="block">running</span>
+                <span className="block">
+                  experience<span className="text-[#ff4b4b]">.</span>
+                </span>
+              </h1>
 
-      {/* TEXTO */}
-      <div className="space-y-6">
-        <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
-          Vuelta a la
-          <span className="block text-primary"> Isla Curupí</span>
-        </h1>
+              <p className="max-w-[330px] text-[0.85rem] leading-[1.55] text-[#8f8a87]">
+                Una experiencia deportiva única en la Isla Curupí. Dos
+                recorridos, naturaleza y desafío real.
+              </p>
+            </div>
+          </div>
 
-        <p className="text-textMuted max-w-md">
-          Carrera pedestre organizada por Echagüe Natación Máster.
-          Recorridos oficiales de 4KM y 5KM.
-        </p>
-
-        <div className="flex gap-4 pt-4">
-          <a
-            href="#inscripcion"
-            className="px-6 py-3 bg-primary text-bg font-semibold rounded-lg hover:bg-primarySoft transition"
-          >
-            Inscribirse
-          </a>
-
-          <a
-            href="#recorridos"
-            className="px-6 py-3 border border-primary text-primary rounded-lg hover:bg-primary/10 transition"
-          >
-            Ver recorridos
-          </a>
+          {/* COLUMNA VACÍA (reserva visual para la esfera) */}
+          <div className="w-[55%]" />
         </div>
       </div>
 
-      {/* VISUAL */}
-      <div className="flex justify-center items-center mt-16 lg:mt-0">
-        <MapMock />
-      </div>
-
+      {/* ESFERA */}
+      <MapMock />
     </section>
   );
 }
