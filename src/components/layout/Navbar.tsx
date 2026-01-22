@@ -1,5 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function Navbar() {
   return (
@@ -10,11 +11,12 @@ export default function Navbar() {
             whileHover={{ scale: 1.05, rotate: -2 }}
             className="relative w-8 h-8 rounded-full bg-[var(--brand)]/10 ring-2 ring-[var(--brand)] overflow-hidden flex items-center justify-center"
           >
-            <img
+            <Image
               src="/img/logomaster.png"
               alt="Logo Echagüe"
-              className="w-full h-full object-cover"
-              onError={(e)=>{(e.currentTarget as HTMLImageElement).style.display='none';}}
+              fill
+              sizes="32px"
+              className="object-cover"
             />
           </motion.div>
           <motion.span

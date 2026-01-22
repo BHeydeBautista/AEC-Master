@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import Navbar from "@/components/layout/Navbar";
 import { IBM_Plex_Sans } from "next/font/google";
+import { ScrollProvider } from "@/contexts/ScrollContext";
 
 const plex = IBM_Plex_Sans({
   subsets: ["latin"],
@@ -28,8 +29,10 @@ export default function RootLayout({
           antialiased
         `}
       >
-        <Navbar />
-        {children}
+        <ScrollProvider>
+          <Navbar />
+          {children}
+        </ScrollProvider>
       </body>
     </html>
   );

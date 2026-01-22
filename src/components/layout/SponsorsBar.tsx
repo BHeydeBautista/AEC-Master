@@ -1,5 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const sponsors = [
   { name: "Sponsor 1", src: "/img/aec.png" },
@@ -23,13 +24,12 @@ export default function SponsorsBar() {
             className="w-12 h-12 rounded-lg bg-white/8 hover:bg-white/12 ring-1 ring-white/15 overflow-hidden flex items-center justify-center transition-all hover:ring-white/25"
             title={s.name}
           >
-            <img
+            <Image
               src={s.src}
               alt={s.name}
+              width={48}
+              height={48}
               className="w-full h-full object-contain p-2"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).style.display = "none";
-              }}
             />
           </div>
         ))}
