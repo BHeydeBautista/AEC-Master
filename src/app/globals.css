@@ -3,6 +3,10 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* Brand color (from Echagüe blue) */
+  --brand: #11b3ff;
+  --brand-600: #0ea3ea;
+  --brand-700: #0b8ac4;
 }
 
 @theme inline {
