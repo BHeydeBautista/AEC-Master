@@ -5,6 +5,11 @@ import SphereLoader from "./SphereLoader";
 import Sphere3D from "./Sphere3D";
 import SphereLights from "./SphereLights";
 import HeroSection from "@/components/sections/HeroSection";
+import DistancesSection from "@/components/sections/DistancesSection";
+import ReglamentoSection from "@/components/sections/ReglamentoSection";
+import ResponsabilidadSection from "@/components/sections/ResponsabilidadSection";
+import InscripcionSection from "@/components/sections/InscripcionSection";
+import ContactoSection from "@/components/sections/ContactoSection";
 import SponsorsBar from "@/components/layout/SponsorsBar";
 
 export default function IntroController() {
@@ -33,6 +38,11 @@ export default function IntroController() {
         }`}
       >
         <HeroSection />
+        <DistancesSection />
+        <ReglamentoSection />
+        <ResponsabilidadSection />
+        <InscripcionSection />
+        <ContactoSection />
         <SponsorsBar />
       </div>
     </div>
