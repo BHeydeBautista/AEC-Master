@@ -1,9 +1,9 @@
-import Hero from "@/components/Hero/Hero";
+import IntroController from "@/components/intro/IntroController";
 
 export default function HomePage() {
   return (
     <main className="min-h-[100dvh] overflow-hidden">
-      <Hero />
+      <IntroController />
     </main>
   );
 }
