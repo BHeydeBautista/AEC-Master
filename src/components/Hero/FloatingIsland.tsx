@@ -81,16 +81,16 @@ export default function FloatingIsland({
 }: FloatingIslandProps) {
   const { scrollProgress } = useScroll();
 
-  // Interpola la escala de 1 a 0 según el scroll
+  // Interpola la escala de 1 a 0 según el scroll (desaparece más rápido)
   const scaleValue = useMemo(() => {
-    const scale = Math.max(1 - scrollProgress * 1.5, 0);
+    const scale = Math.max(1 - scrollProgress * 3, 0);
     // Redondear para evitar actualizaciones micro
     return Math.round(scale * 100) / 100;
   }, [scrollProgress]);
   
-  // Interpola la opacidad de 1 a 0 según el scroll
+  // Interpola la opacidad de 1 a 0 según el scroll (desaparece más rápido)
   const opacityValue = useMemo(() => {
-    const opacity = 1 - scrollProgress;
+    const opacity = Math.max(1 - scrollProgress * 2.5, 0);
     // Redondear para evitar actualizaciones micro
     return Math.round(opacity * 100) / 100;
   }, [scrollProgress]);
