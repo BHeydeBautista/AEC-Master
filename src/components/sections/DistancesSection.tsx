@@ -6,25 +6,26 @@ export default function DistancesSection() {
     >
       <div className="max-w-[620px]">
         <p className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">
-          Distancias
+          Circuitos Oficiales
         </p>
         <h2 className="mt-4 text-[28px] font-semibold tracking-tight text-[#f6f4f2] sm:text-[34px]">
           Elegí tu desafío
         </h2>
         <p className="mt-4 text-[15px] leading-[1.65] text-[#8f8a87]">
-          Dos recorridos oficiales pensados para todos los niveles: una opción
-          ideal para iniciarse y otra para quienes buscan ir un paso más allá.
+          Dos circuitos diseñados para diferentes perfiles: una travesía punto a
+          punto para nadadores aficionados y la circunnavegación completa al
+          Islote Curupí para federados y experimentados.
         </p>
       </div>
 
       <div className="mt-10 grid gap-5 md:grid-cols-2">
-        {/* 2KM */}
+        {/* 2.5KM */}
         <article className="relative overflow-hidden rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(17,179,255,0.18),transparent_55%)]" />
           <div className="relative">
             <div className="flex items-center justify-between gap-4">
               <span className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">
-                Distancia 01
+                Promocional
               </span>
               <span className="rounded-full bg-[var(--brand)]/12 px-3 py-1 text-[11px] font-medium text-[var(--brand)] ring-1 ring-[var(--brand)]/25">
                 Recomendada
@@ -33,60 +34,60 @@ export default function DistancesSection() {
 
             <div className="mt-6 flex items-baseline gap-2">
               <span className="text-[44px] font-semibold leading-none tracking-tight text-[#f6f4f2]">
-                2
+                2.5
               </span>
               <span className="text-[16px] font-medium text-[#f6f4f2]">km</span>
             </div>
 
             <p className="mt-4 text-[14px] leading-[1.65] text-[#8f8a87]">
-              Ideal para debutar: ritmo controlado, enfoque en técnica y
-              confianza. Perfecta para quienes quieren vivir la experiencia
-              completa.
+              Travesía punto a punto aprovechando la corriente a favor. Ideal
+              para nadadores aficionados y nivel intermedio. Perfecta para la
+              masificación del deporte y vivir la experiencia completa.
             </p>
 
             <div className="mt-6 flex items-center gap-3 text-[12px] text-[#9a9593]">
               <span className="rounded-md bg-white/5 px-3 py-2 ring-1 ring-white/10">
-                Iniciación
+                Aficionados
               </span>
               <span className="rounded-md bg-white/5 px-3 py-2 ring-1 ring-white/10">
-                Ritmo moderado
+                Corriente a favor
               </span>
             </div>
           </div>
         </article>
 
-        {/* 4KM */}
+        {/* 5KM */}
         <article className="relative overflow-hidden rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.10),transparent_55%)]" />
           <div className="relative">
             <div className="flex items-center justify-between gap-4">
               <span className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">
-                Distancia 02
+                Competitiva
               </span>
               <span className="rounded-full bg-white/6 px-3 py-1 text-[11px] font-medium text-[#f6f4f2] ring-1 ring-white/12">
-                Avanzada
+                Federados
               </span>
             </div>
 
             <div className="mt-6 flex items-baseline gap-2">
               <span className="text-[44px] font-semibold leading-none tracking-tight text-[#f6f4f2]">
-                4
+                5
               </span>
               <span className="text-[16px] font-medium text-[#f6f4f2]">km</span>
             </div>
 
             <p className="mt-4 text-[14px] leading-[1.65] text-[#8f8a87]">
-              Para quienes buscan exigirse más: mayor resistencia, estrategia y
-              lectura del agua. Una distancia pensada para experimentar el
-              desafío completo.
+              Circunnavegación completa al Islote Curupí, reserva natural
+              protegida. Incluye tramo crítico aguas arriba (Boya 1 a Boya 2)
+              frente al Mirador de Puerto Sánchez, exigiendo técnica y potencia.
             </p>
 
             <div className="mt-6 flex items-center gap-3 text-[12px] text-[#9a9593]">
               <span className="rounded-md bg-white/5 px-3 py-2 ring-1 ring-white/10">
-                Resistencia
+                Experimentados
               </span>
               <span className="rounded-md bg-white/5 px-3 py-2 ring-1 ring-white/10">
-                Ritmo sostenido
+                Nado aguas arriba
               </span>
             </div>
           </div>

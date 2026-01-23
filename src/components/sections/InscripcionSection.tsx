@@ -17,8 +17,9 @@ export default function InscripcionSection() {
               Sumate a la Vuelta 2026
             </h2>
             <p className="mt-4 text-[15px] leading-[1.65] text-[#8f8a87]">
-              Completá el formulario y asegurá tu lugar. Podés elegir 2 km o 4
-              km durante la inscripción.
+              Completá el formulario y asegurá tu lugar. Podés elegir entre 2.5
+              km (Promocional) o 5 km (Competitiva) durante la inscripción. Domingo
+              1 de marzo de 2026.
             </p>
           </div>
 

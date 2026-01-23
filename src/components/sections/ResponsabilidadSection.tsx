@@ -6,18 +6,29 @@ export default function ResponsabilidadSection() {
     >
       <div className="max-w-[720px]">
         <p className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">
-          Responsabilidad
+          Organización Profesional
         </p>
         <h2 className="mt-4 text-[28px] font-semibold tracking-tight text-[#f6f4f2] sm:text-[34px]">
-          Deslinde y condiciones
+          Atlético Echagüe Club
         </h2>
         <p className="mt-4 text-[15px] leading-[1.65] text-[#8f8a87]">
-          Para participar es necesario aceptar el deslinde de responsabilidad.
-          A continuación encontrarás un resumen y el detalle desplegable.
+          Fundado en 1932, el AEC es un pilar del deporte en la región. Nuestra
+          Subcomisión de Nadadores Máster cuenta con nadadores experimentados en
+          circuitos de aguas abiertas nacionales e internacionales, garantizando
+          una visión técnica profesional de la competencia.
         </p>
       </div>
 
       <div className="mt-10 max-w-[820px] rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md">
+        <h3 className="text-sm font-semibold text-[#f6f4f2] mb-4">Visión de Futuro: Circuito Nacional</h3>
+        <p className="text-[13px] leading-[1.7] text-[#8f8a87] mb-4">
+          Este evento es el pilar para consolidar a Paraná en el mapa de las aguas
+          abiertas. Nuestra meta es la homologación federal para que la "Vuelta al
+          Islote Curupí" integre el calendario de la Confederación Argentina de
+          Deportes Acuáticos (CADDA), atrayendo a la élite de la natación argentina
+          a nuestra provincia.
+        </p>
+        <h3 className="text-sm font-semibold text-[#f6f4f2] mb-3 mt-6">Deslinde de Responsabilidad</h3>
         <ul className="space-y-3 text-[13px] leading-[1.7] text-[#8f8a87]">
           <li>• Participación bajo responsabilidad personal.</li>
           <li>• Condiciones climáticas/hídricas pueden modificar el evento.</li>

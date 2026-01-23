@@ -19,44 +19,46 @@ export default function ContactoSection() {
       <div className="mt-10 grid gap-5 md:grid-cols-3">
         <a
           className="pointer-events-auto rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md hover:bg-white/5 transition"
-          href="mailto:info@vueltaisla.com"
+          href="mailto:coordinacion@example.com"
         >
           <p className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">
-            Email
+            Email Coordinación
           </p>
           <p className="mt-3 text-sm font-medium text-[#f6f4f2]">
-            info@vueltaisla.com
+            coordinacion@example.com
           </p>
           <p className="mt-2 text-[13px] leading-[1.7] text-[#8f8a87]">
-            Consultas generales e inscripciones.
+            Consultas generales e inscripciones. (Actualizar con email real)
           </p>
         </a>
 
         <a
           className="pointer-events-auto rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md hover:bg-white/5 transition"
-          href="#"
-          onClick={(e) => e.preventDefault()}
+          href="https://www.instagram.com/echaguemasternatacion/"
+          target="_blank"
+          rel="noreferrer"
         >
           <p className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">
-            WhatsApp
+            Instagram Máster
           </p>
-          <p className="mt-3 text-sm font-medium text-[#f6f4f2]">+54 9 …</p>
+          <p className="mt-3 text-sm font-medium text-[#f6f4f2]">@EchagueMasterNatacion</p>
           <p className="mt-2 text-[13px] leading-[1.7] text-[#8f8a87]">
-            (Placeholder) Cambiamos por el número real.
+            Subcomisión de Nadadores Máster
           </p>
         </a>
 
         <a
           className="pointer-events-auto rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md hover:bg-white/5 transition"
-          href="#"
-          onClick={(e) => e.preventDefault()}
+          href="https://www.instagram.com/atleticoechaguecluboficial/"
+          target="_blank"
+          rel="noreferrer"
         >
           <p className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">
-            Instagram
+            Instagram Oficial
           </p>
-          <p className="mt-3 text-sm font-medium text-[#f6f4f2]">@vueltaisla</p>
+          <p className="mt-3 text-sm font-medium text-[#f6f4f2]">@AtleticoEchagueClubOficial</p>
           <p className="mt-2 text-[13px] leading-[1.7] text-[#8f8a87]">
-            (Placeholder) Link al perfil oficial.
+            Atlético Echagüe Club
           </p>
         </a>
       </div>
