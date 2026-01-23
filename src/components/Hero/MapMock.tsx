@@ -155,14 +155,16 @@ export default function MapMock(props: MapMockProps = {}) {
     const r = values[1] as number;
     const gActive = g > 0.001;
     const rActive = r > 0.001;
-    if (rActive) return 1 - clamp01(r);
-    if (gActive) return 1 - clamp01(g);
+    // Mantener el mapa visible mientras “carga”: sólo un dim sutil.
+    // (Antes se tapaba + blur, y se percibía borroso.)
+    const DIM_MAX = 0.28;
+    if (rActive) return DIM_MAX * (1 - clamp01(r));
+    if (gActive) return DIM_MAX * (1 - clamp01(g));
     return 0;
   });
 
-  const mapBlurPx = useTransform(mapCoverOpacity, (cover) => 16 * clamp01(cover));
-
-  const mapFilter = useMotionTemplate`blur(${mapBlurPx}px)`;
+  // Sin blur: la imagen debe verse nítida durante toda la animación.
+  const mapFilter = useMotionTemplate`blur(0px)`;
 
   return (
     <div
@@ -208,26 +210,33 @@ export default function MapMock(props: MapMockProps = {}) {
             className="relative rounded-full bg-[#111] shadow-[0_0_180px_rgba(0,0,0,0.9)]"
             style={{ width: mapSize, height: mapSize }}
           >
-            <div className="absolute inset-6 rounded-full overflow-hidden relative">
-              <motion.div className="absolute inset-0" style={{ filter: mapFilter, scale: appliedImageScale }}>
-                <Image
-                  src="/img/mapa-curupi.png"
-                  alt="Mapa Isla Curupí"
-                  fill
-                  sizes={`${mapSize}px`}
-                  className="object-cover"
-                  priority
-                />
-              </motion.div>
+            {/* Mapa (recorte circular real) */}
+            <div className="absolute inset-0 rounded-full overflow-hidden">
+              <div className="relative h-full w-full">
+                <motion.div
+                  className="absolute inset-0"
+                  style={{ filter: mapFilter, scale: appliedImageScale }}
+                >
+                  <Image
+                    src="/img/mapa-curupi2.png"
+                    alt="Mapa Isla Curupí"
+                    fill
+                    sizes={`${mapSize}px`}
+                    className="object-cover"
+                    priority
+                  />
+                </motion.div>
 
-              <motion.div
-                className="absolute inset-0 bg-[#0b0b0b]"
-                style={{ opacity: mapCoverOpacity }}
-              />
+                <motion.div
+                  className="absolute inset-0 bg-[#0b0b0b]"
+                  style={{ opacity: mapCoverOpacity }}
+                />
+              </div>
             </div>
 
-            <div className="absolute inset-6 rounded-full border border-white/10" />
-            <div className="absolute inset-12 rounded-full border border-white/5" />
+            {/* Aros internos (encima del mapa) */}
+            <div className="pointer-events-none absolute inset-6 rounded-full border border-white/10" />
+            <div className="pointer-events-none absolute inset-12 rounded-full border border-white/5" />
 
             <svg viewBox={`0 0 ${mapSize} ${mapSize}`} className="absolute inset-0">
               <defs>
