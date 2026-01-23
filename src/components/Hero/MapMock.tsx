@@ -16,10 +16,9 @@ export default function MapMock() {
   const rotateX = useTransform(scrollYProgress, [0, 0.7], [-65, 0]);
   const rotateZ = useTransform(scrollYProgress, [0, 0.7], [-25, 0]);
   
-  // Escala: empieza chico como el planeta y crece un poco
+  // Mantener Hero como antes; al acercarse a Distancias se corre a la derecha.
   const scale = useTransform(scrollYProgress, [0, 0.7], [0.65, 1.15]);
-  
-  // Y position: se centra mejor en la pantalla
+  const x = useTransform(scrollYProgress, [0, 0.45, 0.7], [0, 0, 420]);
   const y = useTransform(scrollYProgress, [0, 0.7], [0, -200]);
 
   return (
@@ -30,7 +29,7 @@ export default function MapMock() {
     >
       <motion.div 
         className="relative h-[760px] w-[560px]"
-        style={{ y, scale }}
+        style={{ x, y, scale }}
       >
         {/* Glow exterior */}
         <div className="pointer-events-none absolute left-1/2 top-[360px] h-[680px] w-[680px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,_rgba(255,255,255,0.06),_transparent_60%)]" />

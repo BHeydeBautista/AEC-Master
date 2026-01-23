@@ -39,11 +39,6 @@ export default function IntroController() {
       >
         <HeroSection />
         <DistancesSection />
-        <ReglamentoSection />
-        <ResponsabilidadSection />
-        <InscripcionSection />
-        <ContactoSection />
-        <SponsorsBar />
       </div>
     </div>
   );

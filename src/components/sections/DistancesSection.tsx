@@ -2,25 +2,25 @@ export default function DistancesSection() {
   return (
     <section
       id="distancias"
-      className="relative z-10 mx-auto max-w-7xl px-6 pb-24 pt-32 sm:px-8 lg:px-10"
+      className="relative z-10 mx-auto max-w-7xl px-6 pb-24 pt-28 sm:px-8 lg:px-10"
     >
-      <div className="max-w-[620px]">
+      <div className="w-full max-w-[540px]">
         <p className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">
           Circuitos Oficiales
         </p>
         <h2 className="mt-4 text-[28px] font-semibold tracking-tight text-[#f6f4f2] sm:text-[34px]">
           Elegí tu desafío
         </h2>
-        <p className="mt-4 text-[15px] leading-[1.65] text-[#8f8a87]">
-          Dos circuitos diseñados para diferentes perfiles: una travesía punto a
-          punto para nadadores aficionados y la circunnavegación completa al
-          Islote Curupí para federados y experimentados.
+        <p className="mt-6 text-[15px] leading-[1.65] text-[#8f8a87]">
+          Dos circuitos diseñados para diferentes perfiles: una travesía punto a punto
+          para nadadores aficionados y la circunnavegación completa al Islote Curupí
+          para federados y experimentados.
         </p>
       </div>
 
-      <div className="mt-10 grid gap-5 md:grid-cols-2">
+      <div className="mt-10 flex w-full max-w-[540px] flex-col gap-5">
         {/* 2.5KM */}
-        <article className="relative overflow-hidden rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md">
+        <article className="relative w-full overflow-hidden rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(17,179,255,0.18),transparent_55%)]" />
           <div className="relative">
             <div className="flex items-center justify-between gap-4">
@@ -40,12 +40,12 @@ export default function DistancesSection() {
             </div>
 
             <p className="mt-4 text-[14px] leading-[1.65] text-[#8f8a87]">
-              Travesía punto a punto aprovechando la corriente a favor. Ideal
-              para nadadores aficionados y nivel intermedio. Perfecta para la
-              masificación del deporte y vivir la experiencia completa.
+              Travesía punto a punto aprovechando la corriente a favor. Ideal para nadadores
+              aficionados y nivel intermedio. Perfecta para la masificación del deporte y
+              vivir la experiencia completa.
             </p>
 
-            <div className="mt-6 flex items-center gap-3 text-[12px] text-[#9a9593]">
+            <div className="mt-6 flex flex-wrap gap-3 text-[12px] text-[#9a9593]">
               <span className="rounded-md bg-white/5 px-3 py-2 ring-1 ring-white/10">
                 Aficionados
               </span>
@@ -57,7 +57,7 @@ export default function DistancesSection() {
         </article>
 
         {/* 5KM */}
-        <article className="relative overflow-hidden rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md">
+        <article className="relative w-full overflow-hidden rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.10),transparent_55%)]" />
           <div className="relative">
             <div className="flex items-center justify-between gap-4">
@@ -77,17 +77,20 @@ export default function DistancesSection() {
             </div>
 
             <p className="mt-4 text-[14px] leading-[1.65] text-[#8f8a87]">
-              Circunnavegación completa al Islote Curupí, reserva natural
-              protegida. Incluye tramo crítico aguas arriba (Boya 1 a Boya 2)
-              frente al Mirador de Puerto Sánchez, exigiendo técnica y potencia.
+              Circunnavegación completa al Islote Curupí, reserva natural protegida. Incluye
+              tramo crítico aguas arriba (Boya 1 a Boya 2) frente al Mirador de Puerto
+              Sánchez, exigiendo técnica y potencia.
             </p>
 
-            <div className="mt-6 flex items-center gap-3 text-[12px] text-[#9a9593]">
+            <div className="mt-6 flex flex-wrap gap-3 text-[12px] text-[#9a9593]">
               <span className="rounded-md bg-white/5 px-3 py-2 ring-1 ring-white/10">
-                Experimentados
+                Reserva natural
               </span>
               <span className="rounded-md bg-white/5 px-3 py-2 ring-1 ring-white/10">
-                Nado aguas arriba
+                Aguas arriba
+              </span>
+              <span className="rounded-md bg-white/5 px-3 py-2 ring-1 ring-white/10">
+                Técnica y potencia
               </span>
             </div>
           </div>
