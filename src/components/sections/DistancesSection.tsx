@@ -2,7 +2,7 @@ export default function DistancesSection() {
   return (
     <section
       id="distancias"
-      className="relative z-10 mx-auto max-w-7xl px-6 pb-24 pt-28 sm:px-8 lg:px-10"
+      className="relative z-10 mx-auto min-h-[160vh] max-w-7xl px-6 pb-40 pt-36 sm:px-8 lg:px-10"
     >
       <div className="w-full max-w-[540px]">
         <p className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">
@@ -18,9 +18,12 @@ export default function DistancesSection() {
         </p>
       </div>
 
-      <div className="mt-10 flex w-full max-w-[540px] flex-col gap-5">
+      <div className="mt-16 flex w-full max-w-[540px] flex-col gap-5">
         {/* 2.5KM */}
-        <article className="relative w-full overflow-hidden rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md">
+        <article
+          id="distance2"
+          className="relative w-full overflow-hidden rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md"
+        >
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(17,179,255,0.18),transparent_55%)]" />
           <div className="relative">
             <div className="flex items-center justify-between gap-4">
@@ -57,7 +60,10 @@ export default function DistancesSection() {
         </article>
 
         {/* 5KM */}
-        <article className="relative w-full overflow-hidden rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md">
+        <article
+          id="distance5"
+          className="relative w-full overflow-hidden rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md"
+        >
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.10),transparent_55%)]" />
           <div className="relative">
             <div className="flex items-center justify-between gap-4">

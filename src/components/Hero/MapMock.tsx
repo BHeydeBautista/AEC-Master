@@ -1,15 +1,76 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import type { MotionValue } from "framer-motion";
+import {
+  motion,
+  useMotionTemplate,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import Image from "next/image";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
-export default function MapMock() {
+function clamp01(value: number) {
+  return Math.min(1, Math.max(0, value));
+}
+
+type MapMockProps = {
+  tiltX?: MotionValue<number> | number;
+  tiltZ?: MotionValue<number> | number;
+  showIsland?: boolean;
+  islandOpacity?: MotionValue<number> | number;
+  mapTop?: MotionValue<number> | number;
+  glowTop?: MotionValue<number> | number;
+  imageScale?: MotionValue<number> | number;
+  mapSize?: number;
+  stageWidth?: number;
+  stageHeight?: number;
+  perspective?: number;
+};
+
+export default function MapMock(props: MapMockProps = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const distanciasSectionRef = useRef<HTMLElement | null>(null);
+  const distance2Ref = useRef<HTMLElement | null>(null);
+  const distance5Ref = useRef<HTMLElement | null>(null);
+
+  const isInlineStage =
+    props.stageWidth !== undefined ||
+    props.stageHeight !== undefined ||
+    props.perspective !== undefined ||
+    props.mapSize !== undefined ||
+    props.mapTop !== undefined ||
+    props.glowTop !== undefined ||
+    props.imageScale !== undefined ||
+    props.tiltX !== undefined ||
+    props.tiltZ !== undefined;
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"]
+  });
+
+  useEffect(() => {
+    distanciasSectionRef.current = document.getElementById("distancias");
+    distance2Ref.current = document.getElementById("distance2");
+    distance5Ref.current = document.getElementById("distance5");
+  }, []);
+
+  const { scrollYProgress: distanciasProgress } = useScroll({
+    target: distanciasSectionRef,
+    // Dimming suave al acercarse a la sección
+    offset: ["start 0.95", "start 0.55"],
+  });
+
+  const { scrollYProgress: distance2Progress } = useScroll({
+    target: distance2Ref,
+    // Arranca cuando el card está bastante abajo (evita “se activa antes”)
+    offset: ["start 0.85", "end 0.35"],
+  });
+
+  const { scrollYProgress: distance5Progress } = useScroll({
+    target: distance5Ref,
+    offset: ["start 0.85", "end 0.35"],
   });
 
   // Rotación: empieza de perfil (65°) y se vuelve plano (0°)
@@ -21,44 +82,154 @@ export default function MapMock() {
   const x = useTransform(scrollYProgress, [0, 0.45, 0.7], [0, 0, 420]);
   const y = useTransform(scrollYProgress, [0, 0.7], [0, -200]);
 
+  const stageWidth = props.stageWidth ?? 560;
+  const stageHeight = props.stageHeight ?? 760;
+  const perspective = props.perspective ?? 1200;
+  const mapSize = props.mapSize ?? 520;
+  const mapCenter = mapSize / 2;
+  const mapRadius = mapCenter - 4;
+  const arcLeft = `M ${mapCenter} ${mapCenter - mapRadius} A ${mapRadius} ${mapRadius} 0 0 0 ${mapCenter} ${mapCenter + mapRadius}`;
+  const arcRight = `M ${mapCenter} ${mapCenter - mapRadius} A ${mapRadius} ${mapRadius} 0 0 1 ${mapCenter} ${mapCenter + mapRadius}`;
+
+  const appliedTiltX = isInlineStage ? (props.tiltX ?? -65) : rotateX;
+  const appliedTiltZ = isInlineStage ? (props.tiltZ ?? -25) : rotateZ;
+  const appliedMapTop = props.mapTop ?? 340;
+  const appliedGlowTop = props.glowTop ?? 360;
+  const appliedImageScale = props.imageScale ?? 1.12;
+
+  // Cargas por card:
+  // - distance2: llena verde y revela mapa
+  // - distance5: llena rojo y recarga/revela mapa
+  // Nota: en algunos layouts el progreso no llega a 1 exacto; amplificamos para asegurar el 100%.
+  const LOAD_GAIN = 1.35;
+  const greenLoad = useTransform(distance2Progress, (v) => clamp01(v * LOAD_GAIN));
+  const redLoad = useTransform(distance5Progress, (v) => clamp01(v * LOAD_GAIN));
+
+  // Cada barra llena SOLO su semicircunferencia (pathLength=1)
+  const greenGap = useTransform(greenLoad, (p) => 1 - p);
+  const redGap = useTransform(redLoad, (p) => 1 - p);
+  const greenDashArray = useMotionTemplate`${greenLoad} ${greenGap}`;
+  const redDashArray = useMotionTemplate`${redLoad} ${redGap}`;
+
+  const ringOpacity = useTransform([greenLoad, redLoad], (values) => {
+    const g = values[0] as number;
+    const r = values[1] as number;
+    return (g > 0.001 || r > 0.001 ? 0.9 : 0) as number;
+  });
+
+  // Medias (50/50) siempre visibles.
+  // En Hero: normales. En Distancias: se apagan. Cada color se prende al tocar su card.
+  const dimT = useTransform(distanciasProgress, (v) => clamp01(v));
+  const baseHalfOpacity = useTransform(dimT, (t) => ((1 - t) * 1 + t * 0.18) as number);
+
+  const greenHalfOpacity = useTransform([baseHalfOpacity, greenLoad], (values) => {
+    const base = values[0] as number;
+    const g = values[1] as number;
+    return (g > 0.02 ? 1 : base) as number;
+  });
+
+  const redHalfOpacity = useTransform([baseHalfOpacity, redLoad], (values) => {
+    const base = values[0] as number;
+    const r = values[1] as number;
+    return (r > 0.02 ? 1 : base) as number;
+  });
+
+  const greenActive = useTransform(greenLoad, (g) => (g > 0.001 ? 1 : 0) as number);
+  const redActive = useTransform(redLoad, (r) => (r > 0.001 ? 1 : 0) as number);
+
+  // Cuando el rojo está cargando, bajamos el verde para que se note el cambio.
+  const redLoading = useTransform(redLoad, (r) => (r > 0.02 && r < 0.98 ? 1 : 0) as number);
+  const greenFade = useTransform(redLoading, (a) => (a >= 1 ? 0.12 : 1) as number);
+
+  const greenRingOpacity = useTransform([ringOpacity, greenActive, greenFade], (v) =>
+    (v[0] as number) * (v[1] as number) * (v[2] as number)
+  );
+
+  const redRingOpacity = useTransform([ringOpacity, redActive], (v) =>
+    (v[0] as number) * (v[1] as number)
+  );
+
+  // Capa que tapa el mapa y se “abre” con la carga
+  const mapCoverOpacity = useTransform([greenLoad, redLoad], (values) => {
+    const g = values[0] as number;
+    const r = values[1] as number;
+    const gActive = g > 0.001;
+    const rActive = r > 0.001;
+    if (rActive) return 1 - clamp01(r);
+    if (gActive) return 1 - clamp01(g);
+    return 0;
+  });
+
+  const mapBlurPx = useTransform(mapCoverOpacity, (cover) => 16 * clamp01(cover));
+
+  const mapFilter = useMotionTemplate`blur(${mapBlurPx}px)`;
+
   return (
     <div
       ref={containerRef}
-      className="pointer-events-none fixed inset-0 flex items-center justify-center z-20"
-      style={{ perspective: "1200px" }}
+      className={
+        isInlineStage
+          ? "pointer-events-none relative"
+          : "pointer-events-none fixed inset-0 z-20 flex items-center justify-center"
+      }
+      style={{ perspective: `${perspective}px` }}
     >
-      <motion.div 
-        className="relative h-[760px] w-[560px]"
-        style={{ x, y, scale }}
+      <motion.div
+        className="relative"
+        style={{
+          width: stageWidth,
+          height: stageHeight,
+          x: isInlineStage ? 0 : x,
+          y: isInlineStage ? 0 : y,
+          scale: isInlineStage ? 1 : scale,
+        }}
       >
         {/* Glow exterior */}
-        <div className="pointer-events-none absolute left-1/2 top-[360px] h-[680px] w-[680px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,_rgba(255,255,255,0.06),_transparent_60%)]" />
+        <motion.div
+          className="pointer-events-none absolute left-1/2 -translate-x-1/2 rounded-full bg-[radial-gradient(circle,_rgba(255,255,255,0.06),_transparent_60%)]"
+          style={{
+            top: appliedGlowTop,
+            width: mapSize + 160,
+            height: mapSize + 160,
+          }}
+        />
 
         {/* Mapa con rotación animada */}
         <motion.div
-          className="absolute left-1/2 top-[340px] -translate-x-1/2"
+          className="absolute left-1/2 -translate-x-1/2"
           style={{ 
-            rotateX,
-            rotateZ,
+            top: appliedMapTop,
+            rotateX: appliedTiltX,
+            rotateZ: appliedTiltZ,
             transformStyle: "preserve-3d" 
           }}
         >
-          <div className="relative h-[520px] w-[520px] rounded-full bg-[#111] shadow-[0_0_180px_rgba(0,0,0,0.9)]">
+          <div
+            className="relative rounded-full bg-[#111] shadow-[0_0_180px_rgba(0,0,0,0.9)]"
+            style={{ width: mapSize, height: mapSize }}
+          >
             <div className="absolute inset-6 rounded-full overflow-hidden relative">
-              <Image
-                src="/img/mapa-curupi.png"
-                alt="Mapa Isla Curupí"
-                fill
-                sizes="520px"
-                className="object-cover scale-[1.12]"
-                priority
+              <motion.div className="absolute inset-0" style={{ filter: mapFilter, scale: appliedImageScale }}>
+                <Image
+                  src="/img/mapa-curupi.png"
+                  alt="Mapa Isla Curupí"
+                  fill
+                  sizes={`${mapSize}px`}
+                  className="object-cover"
+                  priority
+                />
+              </motion.div>
+
+              <motion.div
+                className="absolute inset-0 bg-[#0b0b0b]"
+                style={{ opacity: mapCoverOpacity }}
               />
             </div>
 
             <div className="absolute inset-6 rounded-full border border-white/10" />
             <div className="absolute inset-12 rounded-full border border-white/5" />
 
-            <svg viewBox="0 0 520 520" className="absolute inset-0">
+            <svg viewBox={`0 0 ${mapSize} ${mapSize}`} className="absolute inset-0">
               <defs>
                 <filter id="heroGlow" x="-50%" y="-50%" width="200%" height="200%">
                   <feGaussianBlur stdDeviation="2.5" result="blur" />
@@ -69,34 +240,65 @@ export default function MapMock() {
                 </filter>
               </defs>
 
-              <circle
-                cx="260"
-                cy="260"
-                r="256"
+              {/* Barras estáticas (Hero) */}
+              <motion.circle
+                cx={mapCenter}
+                cy={mapCenter}
+                r={mapRadius}
                 fill="none"
                 stroke="#ef4444"
                 strokeWidth="9"
                 strokeLinecap="round"
                 pathLength="100"
                 strokeDasharray="50 50"
-                transform="rotate(-90 260 260)"
+                transform={`rotate(-90 ${mapCenter} ${mapCenter})`}
                 filter="url(#heroGlow)"
-                opacity="1"
+                style={{ opacity: redHalfOpacity }}
               />
 
-              <circle
-                cx="260"
-                cy="260"
-                r="256"
+              <motion.circle
+                cx={mapCenter}
+                cy={mapCenter}
+                r={mapRadius}
                 fill="none"
                 stroke="#22c55e"
                 strokeWidth="9"
                 strokeLinecap="round"
                 pathLength="100"
                 strokeDasharray="50 50"
-                transform="rotate(90 260 260)"
+                strokeDashoffset="50"
+                transform={`rotate(-90 ${mapCenter} ${mapCenter})`}
                 filter="url(#heroGlow)"
-                opacity="1"
+                style={{ opacity: greenHalfOpacity }}
+              />
+
+              {/* Barras animadas: cada una llena su mitad */}
+              <motion.path
+                d={arcLeft}
+                fill="none"
+                stroke="#22c55e"
+                strokeWidth="9"
+                strokeLinecap="round"
+                pathLength={1}
+                filter="url(#heroGlow)"
+                style={{
+                  strokeDasharray: greenDashArray,
+                  opacity: greenRingOpacity,
+                }}
+              />
+
+              <motion.path
+                d={arcRight}
+                fill="none"
+                stroke="#ef4444"
+                strokeWidth="9"
+                strokeLinecap="round"
+                pathLength={1}
+                filter="url(#heroGlow)"
+                style={{
+                  strokeDasharray: redDashArray,
+                  opacity: redRingOpacity,
+                }}
               />
             </svg>
           </div>
