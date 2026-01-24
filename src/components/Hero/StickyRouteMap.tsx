@@ -38,7 +38,7 @@ export default function StickyRouteMap({
   const islandOpacity = useMotionValue(1);
   const mapTop = useMotionValue(340);
   const glowTop = useMotionValue(360);
-  const imageScale = useMotionValue(1.15);
+  const imageScale = useMotionValue(1);
 
   useEffect(() => {
     const heroSection = document.getElementById(heroTargetId);
@@ -79,7 +79,7 @@ export default function StickyRouteMap({
       // En Distancias queremos el círculo centrado dentro del stage.
       mapTop.set(lerp(340, 150, t));
       glowTop.set(lerp(360, 380, t));
-      imageScale.set(lerp(1.15, 1.08, t));
+      imageScale.set(1);
 
       // Isla solo en Hero (se apaga temprano para que el foco sea el mapa)
       islandOpacity.set(clamp01(1 - t * 1.6));

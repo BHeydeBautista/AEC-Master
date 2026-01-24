@@ -22,6 +22,9 @@ type MapMockProps = {
   mapTop?: MotionValue<number> | number;
   glowTop?: MotionValue<number> | number;
   imageScale?: MotionValue<number> | number;
+  mapImageSrc?: string;
+  imageFit?: "cover" | "contain";
+  imagePosition?: string;
   mapSize?: number;
   stageWidth?: number;
   stageHeight?: number;
@@ -95,7 +98,15 @@ export default function MapMock(props: MapMockProps = {}) {
   const appliedTiltZ = isInlineStage ? (props.tiltZ ?? -25) : rotateZ;
   const appliedMapTop = props.mapTop ?? 340;
   const appliedGlowTop = props.glowTop ?? 360;
-  const appliedImageScale = props.imageScale ?? 1.12;
+  // Para ver el recorrido completo (salida/llegada), evitamos el zoom por defecto.
+  // Si querés volver a “acercar” el mapa, podés pasar `imageScale` desde el caller.
+  const appliedImageScale = props.imageScale ?? 1;
+  const mapImageSrc = props.mapImageSrc ?? "/img/mapa-curupi5.png";
+  // Default: rellenar el círculo con el mapa (sin duplicar imágenes).
+  // Nota: `cover` puede recortar un poco si el aspect ratio no coincide.
+  const imageFit = props.imageFit ?? "cover";
+  // Ajuste de encuadre: baja un poco el foco para mostrar mejor la zona de playas.
+  const imagePosition = props.imagePosition ?? "53% 62%";
 
   // Cargas por card:
   // - distance2: llena verde y revela mapa
@@ -157,14 +168,17 @@ export default function MapMock(props: MapMockProps = {}) {
     const rActive = r > 0.001;
     // Mantener el mapa visible mientras “carga”: sólo un dim sutil.
     // (Antes se tapaba + blur, y se percibía borroso.)
-    const DIM_MAX = 0.28;
+    // Si querés volver a “tapar” el mapa durante carga, subí este valor.
+    const DIM_MAX = 0;
     if (rActive) return DIM_MAX * (1 - clamp01(r));
     if (gActive) return DIM_MAX * (1 - clamp01(g));
     return 0;
   });
 
-  // Sin blur: la imagen debe verse nítida durante toda la animación.
-  const mapFilter = useMotionTemplate`blur(0px)`;
+  // `next/image` usa `sizes` para decidir qué resolución servir.
+  // Como este componente se transforma en 3D + escala en el Hero, pedimos
+  // una resolución bastante mayor para que no se vea pixelado en pantallas HiDPI.
+  const imageSizes = `${Math.round(mapSize * 3)}px`;
 
   return (
     <div
@@ -215,14 +229,16 @@ export default function MapMock(props: MapMockProps = {}) {
               <div className="relative h-full w-full">
                 <motion.div
                   className="absolute inset-0"
-                  style={{ filter: mapFilter, scale: appliedImageScale }}
+                  style={{ scale: appliedImageScale }}
                 >
                   <Image
-                    src="/img/mapa-curupi2.png"
+                    src={mapImageSrc}
                     alt="Mapa Isla Curupí"
                     fill
-                    sizes={`${mapSize}px`}
-                    className="object-cover"
+                    sizes={imageSizes}
+                    quality={100}
+                    className={imageFit === "contain" ? "object-contain" : "object-cover"}
+                    style={{ objectPosition: imagePosition, backfaceVisibility: "hidden", transform: "translateZ(0)" }}
                     priority
                   />
                 </motion.div>
