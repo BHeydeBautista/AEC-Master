@@ -152,12 +152,14 @@ export default function MapMock(props: MapMockProps = {}) {
   const { scrollYProgress: distance2Progress } = useScroll({
     target: distance2Ref,
     // Arranca cuando el card está bastante abajo (evita “se activa antes”)
-    offset: ["start 0.85", "end 0.35"],
+    // Más tarde: requiere que el card esté más arriba en pantalla.
+    // Usar start->start evita que cambie según la altura del card.
+    offset: ["start 0.85", "start 0.3"],
   });
 
   const { scrollYProgress: distance5Progress } = useScroll({
     target: distance5Ref,
-    offset: ["start 0.85", "end 0.35"],
+    offset: ["start 0.85", "start 0.3"],
   });
 
   // Rotación: empieza de perfil (65°) y se vuelve plano (0°)
@@ -342,7 +344,7 @@ export default function MapMock(props: MapMockProps = {}) {
   // - distance2: llena verde y revela mapa
   // - distance5: llena rojo y recarga/revela mapa
   // Nota: en algunos layouts el progreso no llega a 1 exacto; amplificamos para asegurar el 100%.
-  const LOAD_GAIN = 1.35;
+  const LOAD_GAIN = 1.15;
   const greenLoad = useTransform(distance2Progress, (v) =>
     clamp01(v * LOAD_GAIN),
   );
@@ -370,37 +372,36 @@ export default function MapMock(props: MapMockProps = {}) {
     (t) => ((1 - t) * 1 + t * 0.18) as number,
   );
 
-  const greenHalfOpacity = useTransform(
-    [baseHalfOpacity, greenLoad],
-    (values) => {
-      const base = values[0] as number;
-      const g = values[1] as number;
-      return (g > 0.02 ? 1 : base) as number;
-    },
-  );
-
-  const redHalfOpacity = useTransform([baseHalfOpacity, redLoad], (values) => {
-    const base = values[0] as number;
-    const r = values[1] as number;
-    return (r > 0.02 ? 1 : base) as number;
+  // Importante: NO “prender” de golpe las medias barras cuando toca el trigger,
+  // porque tapa visualmente la barra que se está cargando.
+  const greenHalfOpacity = useTransform([baseHalfOpacity, greenLoad], (v) => {
+    const base = v[0] as number;
+    const g = v[1] as number;
+    return (base + g * 0.12) as number;
   });
 
-  const greenActive = useTransform(
-    greenLoad,
-    (g) => (g > 0.001 ? 1 : 0) as number,
+  const redHalfOpacity = useTransform([baseHalfOpacity, redLoad], (v) => {
+    const base = v[0] as number;
+    const r = v[1] as number;
+    return (base + r * 0.12) as number;
+  });
+
+  // “Encendido” de rutas: usamos un umbral más alto para evitar activaciones fantasma.
+  const greenRouteOn = useTransform(greenLoad, (g) =>
+    (g > 0.04 ? 1 : 0) as number,
   );
-  const redActive = useTransform(redLoad, (r) => (r > 0.001 ? 1 : 0) as number);
+  const redRouteOn = useTransform(redLoad, (r) => (r > 0.04 ? 1 : 0) as number);
 
   // Capas: cuando el rojo está activo, ocultamos completamente la ruta verde.
-  const greenRouteGroupOpacity = useTransform(redActive, (r) =>
+  const greenRouteGroupOpacity = useTransform(redRouteOn, (r) =>
     (r > 0.01 ? 0 : 1) as number,
   );
-  const redRouteGroupOpacity = useTransform(redActive, (r) =>
+  const redRouteGroupOpacity = useTransform(redRouteOn, (r) =>
     (r > 0.01 ? 1 : 0) as number,
   );
 
   // Cuando el rojo está activo, apagamos el loop/marker verde para evitar doble lectura.
-  const greenRun = useTransform([greenActive, redActive], (values) => {
+  const greenRun = useTransform([greenRouteOn, redRouteOn], (values) => {
     const g = values[0] as number;
     const r = values[1] as number;
     return (g > 0.5 && r < 0.5 ? 1 : 0) as number;
@@ -473,7 +474,7 @@ export default function MapMock(props: MapMockProps = {}) {
   );
 
   const greenRingOpacity = useTransform(
-    [ringOpacity, greenActive, greenFade],
+    [ringOpacity, greenRouteOn, greenFade],
     (v) => (v[0] as number) * (v[1] as number) * (v[2] as number),
   );
 
@@ -484,14 +485,17 @@ export default function MapMock(props: MapMockProps = {}) {
   );
   const greenTrackBaseOpacity = useTransform(
     greenRingOpacity,
-    (o) => (o > 0.01 ? 0.55 : 0) as number,
+    // Base más apagada: el “prendido” lo da el trail/haz.
+    (o) => (o > 0.01 ? 0.18 : 0) as number,
   );
   const greenTrackBeamOpacity = useTransform(
     greenRingOpacity,
     (o) => (o > 0.01 ? 1 : 0) as number,
   );
+  // Opacidad del marcador: ligada a que la ruta esté “on”, no al run-state.
+  // Esto evita que desaparezca cuando el scroll hace micro-cambios alrededor del umbral.
   const greenMarkerOpacity = useTransform(
-    greenRun,
+    greenRouteOn,
     (g) => (g > 0.01 ? 1 : 0) as number,
   );
 
@@ -507,20 +511,20 @@ export default function MapMock(props: MapMockProps = {}) {
 
     greenRouteAnimRef.current?.pause();
 
-    const setTrail = (t: number) => {
-      const clamped = Math.min(1, Math.max(0, t));
-      greenRouteTrailRef.current?.setAttribute(
-        "stroke-dasharray",
-        `${clamped.toFixed(4)} ${(1 - clamped).toFixed(4)}`,
-      );
-      greenRouteTrailRef.current?.setAttribute("stroke-dashoffset", "0");
-    };
+    const trailDrawable = animeSvg.createDrawable(greenRouteTrailRef.current);
+    const trailAnim = animeAnimate(trailDrawable, {
+      draw: "0 1",
+      duration: 5200,
+      ease: "linear",
+      loop: true,
+      autoplay: false,
+    });
 
     const setBeam = (t: number) => {
       // Haz "detrás" del marcador: el marcador va primero y el haz lo sigue.
       const end = Math.min(1, Math.max(0, t));
       // Un poco más largo para que se perciba el “prendido” detrás del punto.
-      const maxLen = 0.22;
+      const maxLen = 0.3;
       const start = Math.max(0, end - maxLen);
       const len = Math.max(0, end - start);
 
@@ -535,8 +539,8 @@ export default function MapMock(props: MapMockProps = {}) {
     };
 
     // Estado inicial (apagado)
-    setTrail(0);
     setBeam(0);
+    trailAnim.seek(0);
 
     const motionPath = animeSvg.createMotionPath(greenRoutePathRef.current);
     const anim = animeAnimate(greenRouteMarkerRef.current, {
@@ -547,21 +551,24 @@ export default function MapMock(props: MapMockProps = {}) {
       autoplay: false,
       update: (a: { progress?: number }) => {
         const t = (a.progress ?? 0) / 100;
-        // Deja encendido lo recorrido y resetea al reiniciar el loop.
-        setTrail(t);
         setBeam(t);
       },
     });
+
+    // Asegura que el marcador arranque en el inicio del path (evita "se pierde" al activar).
+    anim.seek(0);
 
     greenRouteAnimRef.current = anim;
 
     const setRunning = (active: number) => {
       if (active > 0.5) {
         anim.play();
+        trailAnim.play();
       } else {
         anim.pause();
+        trailAnim.pause();
         anim.seek(0);
-        setTrail(0);
+        trailAnim.seek(0);
         setBeam(0);
       }
     };
@@ -572,11 +579,12 @@ export default function MapMock(props: MapMockProps = {}) {
     return () => {
       unsub();
       anim.pause();
+      trailAnim.pause();
     };
   }, [greenRun, greenRoutePathD]);
 
   const redRingOpacity = useTransform(
-    [ringOpacity, redActive],
+    [ringOpacity, redRouteOn],
     (v) => (v[0] as number) * (v[1] as number),
   );
 
@@ -584,13 +592,13 @@ export default function MapMock(props: MapMockProps = {}) {
     (o > 0.01 ? 0.22 : 0) as number,
   );
   const redTrackBaseOpacity = useTransform(redRingOpacity, (o) =>
-    (o > 0.01 ? 0.55 : 0) as number,
+    (o > 0.01 ? 0.18 : 0) as number,
   );
   const redTrackBeamOpacity = useTransform(redRingOpacity, (o) =>
     (o > 0.01 ? 1 : 0) as number,
   );
-  const redMarkerOpacity = useTransform(redActive, (r) =>
-    (r > 0.01 ? 1 : 0) as number,
+  const redMarkerOpacity = useTransform(redRouteOn, (r) =>
+    ((r as number) > 0.01 ? 1 : 0) as number,
   );
 
   const greenMarkerVisibleOpacity = useTransform(
@@ -614,18 +622,18 @@ export default function MapMock(props: MapMockProps = {}) {
 
     redRouteAnimRef.current?.pause();
 
-    const setTrail = (t: number) => {
-      const clamped = Math.min(1, Math.max(0, t));
-      redRouteTrailRef.current?.setAttribute(
-        "stroke-dasharray",
-        `${clamped.toFixed(4)} ${(1 - clamped).toFixed(4)}`,
-      );
-      redRouteTrailRef.current?.setAttribute("stroke-dashoffset", "0");
-    };
+    const trailDrawable = animeSvg.createDrawable(redRouteTrailRef.current);
+    const trailAnim = animeAnimate(trailDrawable, {
+      draw: "0 1",
+      duration: 7200,
+      ease: "linear",
+      loop: true,
+      autoplay: false,
+    });
 
     const setBeam = (t: number) => {
       const end = Math.min(1, Math.max(0, t));
-      const maxLen = 0.22;
+      const maxLen = 0.3;
       const start = Math.max(0, end - maxLen);
       const len = Math.max(0, end - start);
 
@@ -639,8 +647,8 @@ export default function MapMock(props: MapMockProps = {}) {
       );
     };
 
-    setTrail(0);
     setBeam(0);
+    trailAnim.seek(0);
 
     const motionPath = animeSvg.createMotionPath(redRoutePathRef.current);
     const anim = animeAnimate(redRouteMarkerRef.current, {
@@ -651,32 +659,37 @@ export default function MapMock(props: MapMockProps = {}) {
       autoplay: false,
       update: (a: { progress?: number }) => {
         const t = (a.progress ?? 0) / 100;
-        setTrail(t);
         setBeam(t);
       },
     });
+
+    // Asegura que el marcador arranque en el inicio del path al activar.
+    anim.seek(0);
 
     redRouteAnimRef.current = anim;
 
     const setRunning = (active: number) => {
       if (active > 0.5) {
         anim.play();
+        trailAnim.play();
       } else {
         anim.pause();
+        trailAnim.pause();
         anim.seek(0);
-        setTrail(0);
+        trailAnim.seek(0);
         setBeam(0);
       }
     };
 
-    setRunning(redActive.get());
-    const unsub = redActive.on("change", setRunning);
+    setRunning(redRouteOn.get());
+    const unsub = redRouteOn.on("change", setRunning);
 
     return () => {
       unsub();
       anim.pause();
+      trailAnim.pause();
     };
-  }, [redActive, redRoutePathD]);
+  }, [redRouteOn, redRoutePathD]);
 
   // Capa que tapa el mapa y se “abre” con la carga
   const mapCoverOpacity = useTransform([greenLoad, redLoad], (values) => {
@@ -894,8 +907,6 @@ export default function MapMock(props: MapMockProps = {}) {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         pathLength={1}
-                        strokeDasharray="0 1"
-                        strokeDashoffset={0}
                         filter={`url(#${routeGlowId}-wide)`}
                         style={{
                           opacity: greenTrackBeamOpacity,
@@ -909,12 +920,10 @@ export default function MapMock(props: MapMockProps = {}) {
                         d={greenRoutePathD}
                         fill="none"
                         stroke={`url(#${routeGlowId}-grad)`}
-                        strokeWidth="10"
+                        strokeWidth="14"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         pathLength={1}
-                        strokeDasharray="0 1"
-                        strokeDashoffset={0}
                         filter={`url(#${routeGlowId}-wide)`}
                         style={{
                           opacity: greenTrackBeamOpacity,
@@ -960,8 +969,6 @@ export default function MapMock(props: MapMockProps = {}) {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         pathLength={1}
-                        strokeDasharray="0 1"
-                        strokeDashoffset={0}
                         filter={`url(#${routeGlowId}-wide)`}
                         style={{
                           opacity: redTrackBeamOpacity,
@@ -975,12 +982,10 @@ export default function MapMock(props: MapMockProps = {}) {
                         d={redRoutePathD}
                         fill="none"
                         stroke={`url(#${routeGlowId}-red-grad)`}
-                        strokeWidth="10"
+                        strokeWidth="14"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         pathLength={1}
-                        strokeDasharray="0 1"
-                        strokeDashoffset={0}
                         filter={`url(#${routeGlowId}-wide)`}
                         style={{
                           opacity: redTrackBeamOpacity,

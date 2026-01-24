@@ -1,3 +1,7 @@
+"use client";
+
+import { motion } from "framer-motion";
+
 export default function DistancesSection() {
   return (
     <section
@@ -18,7 +22,7 @@ export default function DistancesSection() {
         </p>
       </div>
 
-      <div className="mt-16 flex w-full max-w-[540px] flex-col gap-5">
+      <div className="mt-16 flex w-full max-w-[540px] flex-col gap-[13.5rem] sm:gap-[23rem]">
         {/* 2.5KM */}
         <article
           id="distance2"
@@ -60,9 +64,13 @@ export default function DistancesSection() {
         </article>
 
         {/* 5KM */}
-        <article
+        <motion.article
           id="distance5"
           className="relative w-full overflow-hidden rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md"
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.45 }}
+          transition={{ duration: 0.55, ease: "easeOut" }}
         >
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.10),transparent_55%)]" />
           <div className="relative">
@@ -100,7 +108,7 @@ export default function DistancesSection() {
               </span>
             </div>
           </div>
-        </article>
+        </motion.article>
       </div>
     </section>
   );
