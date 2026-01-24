@@ -15,6 +15,35 @@ function clamp01(value: number) {
   return Math.min(1, Math.max(0, value));
 }
 
+function catmullRomToBezierPath(
+  pts: Array<{ x: number; y: number }>,
+  tension = 1.1,
+) {
+  if (pts.length < 2) return "";
+  let d = `M ${pts[0].x.toFixed(2)} ${pts[0].y.toFixed(2)}`;
+
+  // Catmull-Rom -> Bézier.
+  // `tension` > 1 suaviza más (curva más redonda), < 1 reduce overshoot.
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] ?? pts[i];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[i + 2] ?? p2;
+    const s = tension / 6;
+
+    const c1 = {
+      x: p1.x + (p2.x - p0.x) * s,
+      y: p1.y + (p2.y - p0.y) * s,
+    };
+    const c2 = {
+      x: p2.x - (p3.x - p1.x) * s,
+      y: p2.y - (p3.y - p1.y) * s,
+    };
+    d += ` C ${c1.x.toFixed(2)} ${c1.y.toFixed(2)}, ${c2.x.toFixed(2)} ${c2.y.toFixed(2)}, ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`;
+  }
+  return d;
+}
+
 function parseObjectPosition(position: string | undefined): {
   x: number;
   y: number;
@@ -82,6 +111,12 @@ export default function MapMock(props: MapMockProps = {}) {
   const greenRouteAnimRef = useRef<ReturnType<typeof animeAnimate> | null>(
     null,
   );
+
+  const redRoutePathRef = useRef<SVGPathElement | null>(null);
+  const redRouteTrailRef = useRef<SVGPathElement | null>(null);
+  const redRouteHighlightRef = useRef<SVGPathElement | null>(null);
+  const redRouteMarkerRef = useRef<SVGGElement | null>(null);
+  const redRouteAnimRef = useRef<ReturnType<typeof animeAnimate> | null>(null);
   const [mapNatural, setMapNatural] = useState<{ w: number; h: number } | null>(
     null,
   );
@@ -200,6 +235,43 @@ export default function MapMock(props: MapMockProps = {}) {
     [],
   );
 
+  // Recorrido 5km (rojo) en coordenadas normalizadas del PNG (0..1).
+  // Nota: estos puntos son una base para iterar; si me pasás coordenadas extra
+  // del trazo rojo en Photoshop, lo dejamos clavado.
+  const redRouteCurvePoints01 = useMemo(
+    () => [
+      // 🔴 Salida
+      mapPxTo01(1813.84, 532.09),
+
+      // 1) Primer tramo: pasa por arriba de la isla Curupí
+      mapPxTo01(1606, 550),
+      mapPxTo01(1506, 545),
+      mapPxTo01(1200, 600),
+
+      // Puntos medidos (Photoshop)
+      mapPxTo01(990, 689),
+      mapPxTo01(996, 727),
+      mapPxTo01(1136, 790),
+      mapPxTo01(1274, 790),
+      mapPxTo01(1295, 790),
+
+      // 3) Va hacia Boya 2 y la rodea por afuera
+      mapPxTo01(1400, 750),
+      mapPxTo01(1450, 715),
+
+      // 4) Vuelta: igual que la verde desde acá
+      mapPxTo01(1505, 774),
+      mapPxTo01(1339, 830),
+      mapPxTo01(1230, 830),
+      mapPxTo01(1111, 816),
+      mapPxTo01(1037, 798),
+      mapPxTo01(969, 777),
+      mapPxTo01(917, 763),
+      mapPxTo01(860, 762),
+    ],
+    [],
+  );
+
   const greenRoutePathD = useMemo(() => {
     const natural = mapNatural ??
       getKnownMapNaturalSize(mapImageSrc) ?? { w: 2508, h: 1139 };
@@ -223,26 +295,7 @@ export default function MapMock(props: MapMockProps = {}) {
     });
 
     const pts = greenRouteCurvePoints01.map(toStage);
-    if (pts.length < 2) return "";
-
-    // Catmull-Rom -> Bézier para suavizar la curva.
-    let d = `M ${pts[0].x.toFixed(2)} ${pts[0].y.toFixed(2)}`;
-    for (let i = 0; i < pts.length - 1; i++) {
-      const p0 = pts[i - 1] ?? pts[i];
-      const p1 = pts[i];
-      const p2 = pts[i + 1];
-      const p3 = pts[i + 2] ?? p2;
-      const c1 = {
-        x: p1.x + (p2.x - p0.x) / 6,
-        y: p1.y + (p2.y - p0.y) / 6,
-      };
-      const c2 = {
-        x: p2.x - (p3.x - p1.x) / 6,
-        y: p2.y - (p3.y - p1.y) / 6,
-      };
-      d += ` C ${c1.x.toFixed(2)} ${c1.y.toFixed(2)}, ${c2.x.toFixed(2)} ${c2.y.toFixed(2)}, ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`;
-    }
-    return d;
+    return catmullRomToBezierPath(pts, 1.1);
   }, [
     imageFit,
     imagePosition,
@@ -250,6 +303,39 @@ export default function MapMock(props: MapMockProps = {}) {
     mapNatural,
     mapSize,
     greenRouteCurvePoints01,
+  ]);
+
+  const redRoutePathD = useMemo(() => {
+    const natural = mapNatural ??
+      getKnownMapNaturalSize(mapImageSrc) ?? { w: 2508, h: 1139 };
+    const pos = parseObjectPosition(imagePosition);
+    const containerW = mapSize;
+    const containerH = mapSize;
+    const imgW = natural.w;
+    const imgH = natural.h;
+    const scaleFit =
+      imageFit === "contain"
+        ? Math.min(containerW / imgW, containerH / imgH)
+        : Math.max(containerW / imgW, containerH / imgH);
+    const displayedW = imgW * scaleFit;
+    const displayedH = imgH * scaleFit;
+    const offsetX = (containerW - displayedW) * pos.x;
+    const offsetY = (containerH - displayedH) * pos.y;
+
+    const toStage = (p: { x: number; y: number }) => ({
+      x: offsetX + p.x * displayedW,
+      y: offsetY + p.y * displayedH,
+    });
+
+    const pts = redRouteCurvePoints01.map(toStage);
+    return catmullRomToBezierPath(pts, 1.1);
+  }, [
+    imageFit,
+    imagePosition,
+    mapImageSrc,
+    mapNatural,
+    mapSize,
+    redRouteCurvePoints01,
   ]);
 
   // Cargas por card:
@@ -305,6 +391,77 @@ export default function MapMock(props: MapMockProps = {}) {
   );
   const redActive = useTransform(redLoad, (r) => (r > 0.001 ? 1 : 0) as number);
 
+  // Capas: cuando el rojo está activo, ocultamos completamente la ruta verde.
+  const greenRouteGroupOpacity = useTransform(redActive, (r) =>
+    (r > 0.01 ? 0 : 1) as number,
+  );
+  const redRouteGroupOpacity = useTransform(redActive, (r) =>
+    (r > 0.01 ? 1 : 0) as number,
+  );
+
+  // Cuando el rojo está activo, apagamos el loop/marker verde para evitar doble lectura.
+  const greenRun = useTransform([greenActive, redActive], (values) => {
+    const g = values[0] as number;
+    const r = values[1] as number;
+    return (g > 0.5 && r < 0.5 ? 1 : 0) as number;
+  });
+
+  const routePoisStage = useMemo(() => {
+    const natural = mapNatural ?? getKnownMapNaturalSize(mapImageSrc) ?? {
+      w: 2508,
+      h: 1139,
+    };
+    const pos = parseObjectPosition(imagePosition);
+    const containerW = mapSize;
+    const containerH = mapSize;
+    const scaleFit =
+      imageFit === "contain"
+        ? Math.min(containerW / natural.w, containerH / natural.h)
+        : Math.max(containerW / natural.w, containerH / natural.h);
+    const displayedW = natural.w * scaleFit;
+    const displayedH = natural.h * scaleFit;
+    const offsetX = (containerW - displayedW) * pos.x;
+    const offsetY = (containerH - displayedH) * pos.y;
+
+    const toStage = (p: { x: number; y: number }) => ({
+      x: offsetX + p.x * displayedW,
+      y: offsetY + p.y * displayedH,
+    });
+
+    return greenRoutePois01.map((p) => {
+      const base = toStage(p);
+      const isBuoy = /boya/i.test(p.key);
+      // Las boyas se renderizan separadas del trazo (offset visual en px).
+      // Salida/Llegada quedan sobre la ruta.
+      const buoyOffset = isBuoy ? { x: 18, y: -18 } : { x: 0, y: 0 };
+
+      const x = base.x + buoyOffset.x;
+      const y = base.y + buoyOffset.y;
+
+      // Etiquetas: auto flip para que no se corten cerca del borde.
+      const isRightSide = x > mapSize * 0.72;
+      const textAnchor: "start" | "end" = isRightSide ? "end" : "start";
+      const dx = isRightSide ? -12 : 12;
+      const dy = y < 26 ? 16 : -14;
+      return {
+        key: p.key,
+        x,
+        y,
+        isBuoy,
+        labelX: x + dx,
+        labelY: y + dy,
+        textAnchor,
+      };
+    });
+  }, [
+    greenRoutePois01,
+    imageFit,
+    imagePosition,
+    mapImageSrc,
+    mapNatural,
+    mapSize,
+  ]);
+
   // Cuando el rojo está cargando, bajamos el verde para que se note el cambio.
   const redLoading = useTransform(
     redLoad,
@@ -334,7 +491,7 @@ export default function MapMock(props: MapMockProps = {}) {
     (o) => (o > 0.01 ? 1 : 0) as number,
   );
   const greenMarkerOpacity = useTransform(
-    greenActive,
+    greenRun,
     (g) => (g > 0.01 ? 1 : 0) as number,
   );
 
@@ -409,19 +566,117 @@ export default function MapMock(props: MapMockProps = {}) {
       }
     };
 
-    setRunning(greenActive.get());
-    const unsub = greenActive.on("change", setRunning);
+    setRunning(greenRun.get());
+    const unsub = greenRun.on("change", setRunning);
 
     return () => {
       unsub();
       anim.pause();
     };
-  }, [greenActive, greenRoutePathD]);
+  }, [greenRun, greenRoutePathD]);
 
   const redRingOpacity = useTransform(
     [ringOpacity, redActive],
     (v) => (v[0] as number) * (v[1] as number),
   );
+
+  const redTrackShadowOpacity = useTransform(redRingOpacity, (o) =>
+    (o > 0.01 ? 0.22 : 0) as number,
+  );
+  const redTrackBaseOpacity = useTransform(redRingOpacity, (o) =>
+    (o > 0.01 ? 0.55 : 0) as number,
+  );
+  const redTrackBeamOpacity = useTransform(redRingOpacity, (o) =>
+    (o > 0.01 ? 1 : 0) as number,
+  );
+  const redMarkerOpacity = useTransform(redActive, (r) =>
+    (r > 0.01 ? 1 : 0) as number,
+  );
+
+  const greenMarkerVisibleOpacity = useTransform(
+    [greenMarkerOpacity, greenRouteGroupOpacity],
+    (values) => (values[0] as number) * (values[1] as number),
+  );
+  const redMarkerVisibleOpacity = useTransform(
+    [redMarkerOpacity, redRouteGroupOpacity],
+    (values) => (values[0] as number) * (values[1] as number),
+  );
+
+  useEffect(() => {
+    if (
+      !redRoutePathRef.current ||
+      !redRouteTrailRef.current ||
+      !redRouteMarkerRef.current ||
+      !redRouteHighlightRef.current
+    )
+      return;
+    if (!redRoutePathD) return;
+
+    redRouteAnimRef.current?.pause();
+
+    const setTrail = (t: number) => {
+      const clamped = Math.min(1, Math.max(0, t));
+      redRouteTrailRef.current?.setAttribute(
+        "stroke-dasharray",
+        `${clamped.toFixed(4)} ${(1 - clamped).toFixed(4)}`,
+      );
+      redRouteTrailRef.current?.setAttribute("stroke-dashoffset", "0");
+    };
+
+    const setBeam = (t: number) => {
+      const end = Math.min(1, Math.max(0, t));
+      const maxLen = 0.22;
+      const start = Math.max(0, end - maxLen);
+      const len = Math.max(0, end - start);
+
+      redRouteHighlightRef.current?.setAttribute(
+        "stroke-dasharray",
+        `${len.toFixed(4)} ${(1 - len).toFixed(4)}`,
+      );
+      redRouteHighlightRef.current?.setAttribute(
+        "stroke-dashoffset",
+        `${(-start).toFixed(4)}`,
+      );
+    };
+
+    setTrail(0);
+    setBeam(0);
+
+    const motionPath = animeSvg.createMotionPath(redRoutePathRef.current);
+    const anim = animeAnimate(redRouteMarkerRef.current, {
+      ...motionPath,
+      duration: 7200,
+      ease: "linear",
+      loop: true,
+      autoplay: false,
+      update: (a: { progress?: number }) => {
+        const t = (a.progress ?? 0) / 100;
+        setTrail(t);
+        setBeam(t);
+      },
+    });
+
+    redRouteAnimRef.current = anim;
+
+    const setRunning = (active: number) => {
+      if (active > 0.5) {
+        anim.play();
+      } else {
+        anim.pause();
+        anim.seek(0);
+        setTrail(0);
+        setBeam(0);
+      }
+    };
+
+    setRunning(redActive.get());
+    const unsub = redActive.on("change", setRunning);
+
+    return () => {
+      unsub();
+      anim.pause();
+    };
+  }, [redActive, redRoutePathD]);
 
   // Capa que tapa el mapa y se “abre” con la carga
   const mapCoverOpacity = useTransform([greenLoad, redLoad], (values) => {
@@ -576,130 +831,168 @@ export default function MapMock(props: MapMockProps = {}) {
                           stopOpacity="1"
                         />
                       </linearGradient>
+
+                      <linearGradient
+                        id={`${routeGlowId}-red-grad`}
+                        x1="0"
+                        y1="0"
+                        x2="1"
+                        y2="0"
+                      >
+                        <stop offset="0%" stopColor="#ef4444" stopOpacity="0" />
+                        <stop
+                          offset="35%"
+                          stopColor="#ef4444"
+                          stopOpacity="0.25"
+                        />
+                        <stop
+                          offset="75%"
+                          stopColor="#ef4444"
+                          stopOpacity="0.95"
+                        />
+                        <stop
+                          offset="100%"
+                          stopColor="#fff1f2"
+                          stopOpacity="1"
+                        />
+                      </linearGradient>
                     </defs>
 
-                    {/* Base oscura para contraste ("fondo") */}
-                    <motion.path
-                      d={greenRoutePathD}
-                      fill="none"
-                      stroke="#000"
-                      strokeWidth="14"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      filter={`url(#${routeGlowId}-wide)`}
-                      style={{ opacity: greenTrackShadowOpacity }}
-                    />
+                    <motion.g opacity={greenRouteGroupOpacity}>
+                      {/* Base oscura para contraste ("fondo") */}
+                      <motion.path
+                        d={greenRoutePathD}
+                        fill="none"
+                        stroke="#000"
+                        strokeWidth="14"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        filter={`url(#${routeGlowId}-wide)`}
+                        style={{ opacity: greenTrackShadowOpacity }}
+                      />
 
-                    {/* Pista verde suave */}
-                    <motion.path
-                      ref={greenRoutePathRef}
-                      d={greenRoutePathD}
-                      fill="none"
-                      stroke="#22c55e"
-                      strokeWidth="7"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      filter={`url(#${routeGlowId})`}
-                      style={{ opacity: greenTrackBaseOpacity }}
-                    />
+                      {/* Pista verde suave */}
+                      <motion.path
+                        ref={greenRoutePathRef}
+                        d={greenRoutePathD}
+                        fill="none"
+                        stroke="#22c55e"
+                        strokeWidth="7"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        filter={`url(#${routeGlowId})`}
+                        style={{ opacity: greenTrackBaseOpacity }}
+                      />
 
-                    {/* Recorrido encendido (queda prendido a medida que avanza y se apaga al reiniciar) */}
-                    <motion.path
-                      ref={greenRouteTrailRef}
-                      d={greenRoutePathD}
-                      fill="none"
-                      stroke="#22c55e"
-                      strokeWidth="11"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      pathLength={1}
-                      strokeDasharray="0 1"
-                      strokeDashoffset={0}
-                      filter={`url(#${routeGlowId}-wide)`}
-                      style={{
-                        opacity: greenTrackBeamOpacity,
-                        mixBlendMode: "screen",
-                      }}
-                    />
+                      {/* Recorrido encendido (queda prendido a medida que avanza y se apaga al reiniciar) */}
+                      <motion.path
+                        ref={greenRouteTrailRef}
+                        d={greenRoutePathD}
+                        fill="none"
+                        stroke="#22c55e"
+                        strokeWidth="11"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        pathLength={1}
+                        strokeDasharray="0 1"
+                        strokeDashoffset={0}
+                        filter={`url(#${routeGlowId}-wide)`}
+                        style={{
+                          opacity: greenTrackBeamOpacity,
+                          mixBlendMode: "screen",
+                        }}
+                      />
 
-                    {/* Haz de luz (tramo brillante que recorre) */}
-                    <motion.path
-                      ref={greenRouteHighlightRef}
-                      d={greenRoutePathD}
-                      fill="none"
-                      stroke={`url(#${routeGlowId}-grad)`}
-                      strokeWidth="10"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      pathLength={1}
-                      strokeDasharray="0 1"
-                      strokeDashoffset={0}
-                      filter={`url(#${routeGlowId}-wide)`}
-                      style={{
-                        opacity: greenTrackBeamOpacity,
-                        mixBlendMode: "screen",
-                      }}
-                    />
+                      {/* Haz de luz (tramo brillante que recorre) */}
+                      <motion.path
+                        ref={greenRouteHighlightRef}
+                        d={greenRoutePathD}
+                        fill="none"
+                        stroke={`url(#${routeGlowId}-grad)`}
+                        strokeWidth="10"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        pathLength={1}
+                        strokeDasharray="0 1"
+                        strokeDashoffset={0}
+                        filter={`url(#${routeGlowId}-wide)`}
+                        style={{
+                          opacity: greenTrackBeamOpacity,
+                          mixBlendMode: "screen",
+                        }}
+                      />
+                    </motion.g>
 
-                    {/* Puntos fijos: salida / boyas / llegada */}
-                    {(() => {
-                      const natural = mapNatural ??
-                        getKnownMapNaturalSize(mapImageSrc) ?? {
-                          w: 2508,
-                          h: 1139,
-                        };
-                      const pos = parseObjectPosition(imagePosition);
-                      const containerW = mapSize;
-                      const containerH = mapSize;
-                      const scaleFit =
-                        imageFit === "contain"
-                          ? Math.min(
-                              containerW / natural.w,
-                              containerH / natural.h,
-                            )
-                          : Math.max(
-                              containerW / natural.w,
-                              containerH / natural.h,
-                            );
-                      const displayedW = natural.w * scaleFit;
-                      const displayedH = natural.h * scaleFit;
-                      const offsetX = (containerW - displayedW) * pos.x;
-                      const offsetY = (containerH - displayedH) * pos.y;
-                      const toStage = (p: { x: number; y: number }) => ({
-                        x: offsetX + p.x * displayedW,
-                        y: offsetY + p.y * displayedH,
-                      });
-                      const pts = greenRoutePois01.map((p) => {
-                        const base = toStage(p);
-                        const isBuoy = /boya/i.test(p.key);
-                        // Las boyas se renderizan separadas del trazo (offset visual en px).
-                        // Salida/Llegada quedan sobre la ruta.
-                        const buoyOffset = isBuoy
-                          ? { x: 18, y: -18 }
-                          : { x: 0, y: 0 };
+                    {/* ===================== Ruta 5km (rojo) ===================== */}
+                    <motion.g opacity={redRouteGroupOpacity}>
+                      {/* Base oscura para contraste (rojo) */}
+                      <motion.path
+                        d={redRoutePathD}
+                        fill="none"
+                        stroke="#000"
+                        strokeWidth="14"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        filter={`url(#${routeGlowId}-wide)`}
+                        style={{ opacity: redTrackShadowOpacity }}
+                      />
 
-                        const x = base.x + buoyOffset.x;
-                        const y = base.y + buoyOffset.y;
+                      {/* Pista roja suave */}
+                      <motion.path
+                        ref={redRoutePathRef}
+                        d={redRoutePathD}
+                        fill="none"
+                        stroke="#ef4444"
+                        strokeWidth="7"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        filter={`url(#${routeGlowId})`}
+                        style={{ opacity: redTrackBaseOpacity }}
+                      />
 
-                        // Etiquetas: auto flip para que no se corten cerca del borde.
-                        const isRightSide = x > mapSize * 0.72;
-                        const textAnchor: "start" | "end" = isRightSide
-                          ? "end"
-                          : "start";
-                        const dx = isRightSide ? -12 : 12;
-                        const dy = y < 26 ? 16 : -14;
-                        return {
-                          key: p.key,
-                          x,
-                          y,
-                          isBuoy,
-                          labelX: x + dx,
-                          labelY: y + dy,
-                          textAnchor,
-                        };
-                      });
-                      return pts.map((p) => (
-                        <g key={p.key} opacity={0.9}>
+                      {/* Recorrido encendido (rojo) */}
+                      <motion.path
+                        ref={redRouteTrailRef}
+                        d={redRoutePathD}
+                        fill="none"
+                        stroke="#ef4444"
+                        strokeWidth="11"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        pathLength={1}
+                        strokeDasharray="0 1"
+                        strokeDashoffset={0}
+                        filter={`url(#${routeGlowId}-wide)`}
+                        style={{
+                          opacity: redTrackBeamOpacity,
+                          mixBlendMode: "screen",
+                        }}
+                      />
+
+                      {/* Haz de luz (rojo) */}
+                      <motion.path
+                        ref={redRouteHighlightRef}
+                        d={redRoutePathD}
+                        fill="none"
+                        stroke={`url(#${routeGlowId}-red-grad)`}
+                        strokeWidth="10"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        pathLength={1}
+                        strokeDasharray="0 1"
+                        strokeDashoffset={0}
+                        filter={`url(#${routeGlowId}-wide)`}
+                        style={{
+                          opacity: redTrackBeamOpacity,
+                          mixBlendMode: "screen",
+                        }}
+                      />
+                    </motion.g>
+
+                    {/* Puntos fijos: salida / boyas / llegada (verde) */}
+                    <motion.g opacity={greenRouteGroupOpacity}>
+                      {routePoisStage.map((p) => (
+                        <g key={`g-${p.key}`} opacity={0.9}>
                           <circle
                             cx={p.x}
                             cy={p.y}
@@ -747,38 +1040,123 @@ export default function MapMock(props: MapMockProps = {}) {
                             {p.key}
                           </text>
                         </g>
-                      ));
-                    })()}
+                      ))}
+                    </motion.g>
+
+                    {/* Puntos fijos: salida / boyas / llegada (rojo) */}
+                    <motion.g opacity={redRouteGroupOpacity}>
+                      {routePoisStage.map((p) => (
+                        <g key={`r-${p.key}`} opacity={0.92}>
+                          <circle
+                            cx={p.x}
+                            cy={p.y}
+                            r={p.isBuoy ? 13 : 14}
+                            fill="none"
+                            stroke="#ef4444"
+                            strokeWidth={2}
+                            opacity={0.22}
+                            filter={`url(#${routeGlowId})`}
+                          />
+                          <circle
+                            cx={p.x}
+                            cy={p.y}
+                            r={p.isBuoy ? 6 : 7}
+                            fill="#111"
+                            stroke="#ef4444"
+                            strokeWidth={3}
+                            filter={`url(#${routeGlowId})`}
+                          />
+
+                          <circle
+                            cx={p.x}
+                            cy={p.y}
+                            r={2.6}
+                            fill="#fff1f2"
+                            opacity={0.95}
+                          />
+
+                          <text
+                            x={p.labelX}
+                            y={p.labelY}
+                            textAnchor={p.textAnchor}
+                            dominantBaseline="middle"
+                            style={{
+                              pointerEvents: "none",
+                              paintOrder: "stroke",
+                            }}
+                            fontSize={11}
+                            fontWeight={650}
+                            letterSpacing={"0.02em"}
+                            fill="#fff1f2"
+                            stroke="rgba(0,0,0,0.65)"
+                            strokeWidth={3}
+                          >
+                            {p.key}
+                          </text>
+                        </g>
+                      ))}
+                    </motion.g>
 
                     {/* Marcador móvil */}
                     <motion.g
                       ref={greenRouteMarkerRef}
-                      style={{ opacity: greenMarkerOpacity }}
+                      style={{ opacity: greenMarkerVisibleOpacity }}
                     >
-                      <circle
-                        r="11"
-                        cx="0"
-                        cy="0"
-                        fill="none"
-                        stroke="#22c55e"
-                        strokeWidth="3"
-                        filter={`url(#${routeGlowId}-wide)`}
-                        opacity="0.7"
-                      />
-                      <circle
-                        r="7"
-                        cx="0"
-                        cy="0"
-                        fill="#22c55e"
-                        filter={`url(#${routeGlowId})`}
-                      />
-                      <circle
-                        r="3.2"
-                        cx="0"
-                        cy="0"
-                        fill="#eafff1"
-                        opacity="0.95"
-                      />
+                        <circle
+                          r="11"
+                          cx="0"
+                          cy="0"
+                          fill="none"
+                          stroke="#22c55e"
+                          strokeWidth="3"
+                          filter={`url(#${routeGlowId}-wide)`}
+                          opacity="0.7"
+                        />
+                        <circle
+                          r="7"
+                          cx="0"
+                          cy="0"
+                          fill="#22c55e"
+                          filter={`url(#${routeGlowId})`}
+                        />
+                        <circle
+                          r="3.2"
+                          cx="0"
+                          cy="0"
+                          fill="#eafff1"
+                          opacity="0.95"
+                        />
+                    </motion.g>
+
+                    {/* Marcador móvil (rojo) */}
+                    <motion.g
+                      ref={redRouteMarkerRef}
+                      style={{ opacity: redMarkerVisibleOpacity }}
+                    >
+                        <circle
+                          r="11"
+                          cx="0"
+                          cy="0"
+                          fill="none"
+                          stroke="#ef4444"
+                          strokeWidth="3"
+                          filter={`url(#${routeGlowId}-wide)`}
+                          opacity="0.7"
+                        />
+                        <circle
+                          r="7"
+                          cx="0"
+                          cy="0"
+                          fill="#ef4444"
+                          filter={`url(#${routeGlowId})`}
+                        />
+                        <circle
+                          r="3.2"
+                          cx="0"
+                          cy="0"
+                          fill="#fff1f2"
+                          opacity="0.95"
+                        />
                     </motion.g>
                   </svg>
                 </motion.div>
