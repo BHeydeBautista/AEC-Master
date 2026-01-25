@@ -94,7 +94,7 @@ export default function Footer() {
         {/* Signature bar */}
         <div className="mt-10 rounded-2xl bg-black/20 p-5 ring-1 ring-white/8 backdrop-blur-md sm:flex sm:items-center sm:justify-between sm:gap-6">
           <p className="text-[13px] leading-[1.7] text-[#8f8a87]">
-            © {year} <span className="text-[#dddcda]">Systemium Enterprise</span>. Todos los derechos reservados.
+            © {year} <span className="text-[#dddcda]">Systemium</span>. Todos los derechos reservados.
           </p>
           <p className="mt-2 text-[12px] leading-[1.7] text-[#9a9593] sm:mt-0 sm:text-right">
             Diseño & desarrollo web: <span className="text-[#dddcda]">Bautista Heyde</span>
