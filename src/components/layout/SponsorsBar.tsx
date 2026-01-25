@@ -3,35 +3,70 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 const sponsors = [
-  { name: "Sponsor 1", src: "/img/aec.png" },
-  { name: "Sponsor 2", src: "/img/aec.png" },
-  { name: "Sponsor 3", src: "/img/aec.png" },
+  { name: "Atlético Echagüe Club", src: "/img/aec.png" },
+  { name: "Máster", src: "/img/logomaster.png" },
 ];
 
-export default function SponsorsBar() {
+type SponsorsBarProps = {
+  className?: string;
+};
+
+export default function SponsorsBar({ className = "" }: SponsorsBarProps) {
   return (
     <motion.aside
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.8 }}
-      className="fixed bottom-8 right-8 z-40 flex flex-col items-center gap-3 bg-black/40 backdrop-blur-md rounded-xl px-5 py-4 border border-white/5"
+      initial="hidden"
+      animate="show"
+      variants={{
+        hidden: { opacity: 0, y: 10 },
+        show: {
+          opacity: 1,
+          y: 0,
+          transition: {
+            duration: 0.45,
+            delay: 0.75,
+            ease: [0.22, 1, 0.36, 1],
+            staggerChildren: 0.08,
+            delayChildren: 0.1,
+          },
+        },
+      }}
+      className={`flex w-[220px] flex-col items-end gap-3 ${className}`}
     >
-      <span className="text-xs font-light tracking-widest text-[#8f8a87] uppercase">Sponsored by</span>
-      <div className="flex items-center gap-4">
+      <span className="w-full text-right text-[11px] font-light tracking-[0.28em] text-[#8f8a87] uppercase">
+        Sponsored by
+      </span>
+
+      <div className="flex w-full items-center justify-center gap-6">
         {sponsors.map((s, i) => (
-          <div
+          <motion.div
             key={s.name + i}
-            className="w-12 h-12 rounded-lg bg-white/8 hover:bg-white/12 ring-1 ring-white/15 overflow-hidden flex items-center justify-center transition-all hover:ring-white/25"
+            variants={{
+              hidden: { opacity: 0, y: 6, scale: 0.96 },
+              show: { opacity: 1, y: 0, scale: 1 },
+            }}
+            animate={{ y: [0, -2, 0] }}
+            whileHover={{ scale: 1.07, y: -3 }}
+            transition={{
+              y: {
+                duration: 4.2 + i * 0.35,
+                repeat: Infinity,
+                ease: "easeInOut",
+              },
+              scale: { type: "spring", stiffness: 420, damping: 26 },
+            }}
+            className="group relative h-16 w-16 overflow-hidden rounded-full"
             title={s.name}
           >
+            <div className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-white/10 transition group-hover:ring-white/20" />
+            <div className="pointer-events-none absolute -inset-2 rounded-full bg-[radial-gradient(circle,rgba(17,179,255,0.18),transparent_60%)] opacity-0 transition group-hover:opacity-100" />
             <Image
               src={s.src}
               alt={s.name}
-              width={48}
-              height={48}
-              className="w-full h-full object-contain p-2"
+              width={72}
+              height={72}
+              className="h-full w-full object-contain"
             />
-          </div>
+          </motion.div>
         ))}
       </div>
     </motion.aside>

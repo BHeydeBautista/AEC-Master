@@ -808,7 +808,8 @@ export default function MapMock(props: MapMockProps = {}) {
                       transform: "translateZ(0)",
                     }}
                     priority
-                    onLoadingComplete={(img) => {
+                    onLoad={(e) => {
+                      const img = e.currentTarget;
                       const w = img.naturalWidth;
                       const h = img.naturalHeight;
                       if (w && h) setMapNatural({ w, h });

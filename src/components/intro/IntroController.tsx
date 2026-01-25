@@ -8,6 +8,7 @@ import HeroSection from "@/components/sections/HeroSection";
 import DistancesSection from "@/components/sections/DistancesSection";
 import ReglamentoSection from "@/components/sections/ReglamentoSection";
 import ResponsabilidadSection from "../sections/ResponsabilidadSection";
+import SponsorsSection from "../sections/SponsorsSection";
 import InscripcionSection from "../sections/InscripcionSection";
 import ContactoSection from "../sections/ContactoSection";
 
@@ -59,6 +60,7 @@ export default function IntroController() {
         <DistancesSection />
         <ReglamentoSection />
         <ResponsabilidadSection />
+        <SponsorsSection />
         <InscripcionSection />
         <ContactoSection />
       </div>

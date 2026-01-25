@@ -2,6 +2,7 @@
 
 import MapMock from "./MapMock";
 import FloatingIsland from "./FloatingIsland";
+import SponsorsBar from "../layout/SponsorsBar";
 
 export default function Hero() {
   return (
@@ -40,6 +41,10 @@ export default function Hero() {
           />
 
           <MapMock />
+
+          <div className="pointer-events-auto absolute bottom-10 right-10 z-30 select-none">
+            <SponsorsBar />
+          </div>
         </div>
       </section>
     </>
