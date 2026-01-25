@@ -15,49 +15,50 @@ export default function Hero() {
                 Atlético Echagüe Club · 1 de Marzo 2026
               </p>
 
-              <h1 className="mt-5 text-[42px] font-semibold leading-[0.98] tracking-tight text-[#f6f4f2] sm:text-[58px] md:text-[72px]">
+              <h1 className="mt-5 text-[32px] sm:text-[42px] md:text-[72px] font-semibold leading-[1.08] tracking-tight text-[#f6f4f2]">
                 <span className="block">Vuelta al</span>
                 <span className="block">Islote Curupí</span>
                 <span className="block text-[var(--brand)]">2026</span>
               </h1>
 
-              <p className="mt-5 max-w-[460px] text-[13px] leading-[1.55] text-[#8f8a87] sm:mt-6 sm:text-[15px] sm:leading-[1.65]">
-                Desafiando al Gigante de Agua. Un evento organizado por la Subcomisión
-                de Nadadores Máster del Atlético Echagüe Club. Largada en Balneario
-                Thompson, llegada en Balneario Municipal. Dos distancias: 2.5 km
-                promocional y 5 km competitiva alrededor del Islote Curupí.
+              <p className="mt-5 max-w-[460px] text-[12px] leading-[1.5] text-[#8f8a87] sm:mt-6 sm:text-[15px] sm:leading-[1.65]">
+                Desafiando al Gigante de Agua. Un evento organizado por la Subcomisión de Nadadores Máster del Atlético Echagüe Club.
+              </p>
+              <p className="mt-2 max-w-[460px] text-[12px] leading-[1.5] text-[#8f8a87] sm:text-[15px] sm:leading-[1.65]">
+                Largada en Balneario Thompson, llegada en Balneario Municipal. Dos distancias: 2.5 km promocional y 5 km competitiva alrededor del Islote Curupí.
               </p>
             </div>
           </div>
 
           {/* Mobile-only: moneda (más chica) */}
-          <FloatingIsland
-            position="absolute"
-            className="md:hidden z-40"
-            offsetX={0}
-            offsetY={60}
-            width={360}
-            height={200}
-          />
-
-          {/* Mobile-only: círculo/recorridos con el mismo efecto (fixed), pero más chico */}
-          <MapMock
-            className="md:hidden z-30"
-            forceFixed
-            stageWidth={420}
-            stageHeight={620}
-            perspective={1000}
-            mapSize={360}
-            mapTop={316}
-            glowTop={334}
-            heroRotateXStart={-56}
-            heroRotateZStart={-18}
-            heroScaleStart={0.58}
-            heroScaleEnd={1.0}
-            heroXEnd={0}
-            heroYStart={70}
-            heroYEnd={-28}
-          />
+          <div className="md:hidden flex flex-col items-center w-full mt-32">
+            <FloatingIsland
+              position="absolute"
+              className="z-40"
+              offsetX={0}
+              offsetY={80}
+              width={340}
+              height={170}
+            />
+            <div className="h-4" />
+            <MapMock
+              className="z-30"
+              forceFixed
+              stageWidth={340}
+              stageHeight={400}
+              perspective={900}
+              mapSize={260}
+              mapTop={180}
+              glowTop={200}
+              heroRotateXStart={-56}
+              heroRotateZStart={-18}
+              heroScaleStart={0.58}
+              heroScaleEnd={1.0}
+              heroXEnd={0}
+              heroYStart={120}
+              heroYEnd={-10}
+            />
+          </div>
 
           {/* Desktop-only (pesado): 3D + mapa fixed */}
           <div className="hidden md:block">
