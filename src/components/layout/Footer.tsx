@@ -40,7 +40,7 @@ export default function Footer() {
             <div className="flex items-center gap-5">
               <div
                 className="group relative h-32 w-32 overflow-hidden rounded-full sm:h-44 sm:w-44"
-                title="Systemium"
+                
               >
                 
                 <Image
