@@ -10,16 +10,22 @@ export default function DistancesSection() {
     >
       <div className="w-full max-w-[540px]">
         <p className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">
-          Circuitos Oficiales
+          INFORMACION GENERAL
         </p>
         <h2 className="mt-4 text-[28px] font-semibold tracking-tight text-[#f6f4f2] sm:text-[34px]">
-          Elegí tu desafío
+          5 km y 2,5 km
         </h2>
-        <p className="mt-6 text-[15px] leading-[1.65] text-[#8f8a87]">
-          Dos circuitos diseñados para diferentes perfiles: una travesía punto a punto
-          para nadadores aficionados y la circunnavegación completa al Islote Curupí
-          para federados y experimentados.
-        </p>
+        <div className="mt-6 space-y-2 text-[15px] leading-[1.65] text-[#8f8a87]">
+          <p>Prueba de Natación en Aguas Abiertas.</p>
+          <p>5 km prueba principal, modalidad circuito.</p>
+          <p>2,5 km prueba promocional, modalidad punto a punto.</p>
+          <p>Rio Parana, Entre Ríos, Argentina.</p>
+          <div className="mt-4 rounded-xl bg-red-500/10 px-4 py-3 text-[13px] leading-[1.7] text-red-200 ring-1 ring-red-400/20">
+            OBLIGATORIO EL USO DE TORPEDO o similar elemento de
+            Seguridad individual Durante todo el desarrollo de la
+            competencia.
+          </div>
+        </div>
       </div>
 
       <div className="mt-16 flex w-full max-w-[540px] flex-col gap-[38rem] sm:gap-[13.5rem] lg:gap-[23rem]">
@@ -41,15 +47,13 @@ export default function DistancesSection() {
 
             <div className="mt-6 flex items-baseline gap-2">
               <span className="text-[38px] font-semibold leading-none tracking-tight text-[#f6f4f2] sm:text-[44px]">
-                2.5
+                2,5
               </span>
               <span className="text-[14px] font-medium text-[#f6f4f2] sm:text-[16px]">km</span>
             </div>
 
             <p className="mt-4 text-[14px] leading-[1.65] text-[#8f8a87]">
-              Travesía punto a punto aprovechando la corriente a favor. Ideal para nadadores
-              aficionados y nivel intermedio. Perfecta para la masificación del deporte y
-              vivir la experiencia completa.
+              2,5 km prueba promocional, modalidad punto a punto.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3 text-[12px] text-[#9a9593]">
@@ -91,9 +95,7 @@ export default function DistancesSection() {
             </div>
 
             <p className="mt-4 text-[14px] leading-[1.65] text-[#8f8a87]">
-              Circunnavegación completa al Islote Curupí, reserva natural protegida. Incluye
-              tramo crítico aguas arriba (Boya 1 a Boya 2) frente al Mirador de Puerto
-              Sánchez, exigiendo técnica y potencia.
+              5 km prueba principal, modalidad circuito.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3 text-[12px] text-[#9a9593]">

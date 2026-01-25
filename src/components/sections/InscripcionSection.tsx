@@ -17,22 +17,49 @@ export default function InscripcionSection() {
               Sumate a la Vuelta 2026
             </h2>
             <p className="mt-4 text-[15px] leading-[1.65] text-[#8f8a87]">
-              Completá el formulario y asegurá tu lugar. Dos distancias: 2,5 km
-              (Promocional) y 5 km (Principal). Domingo 01 de marzo de 2026.
+              Completá el formulario y asegurá tu lugar.
             </p>
 
-            <div className="mt-6 grid gap-3 text-[13px] leading-[1.65] text-[#8f8a87]">
+            <div className="mt-6 grid gap-3 text-[13px] leading-[1.7] text-[#8f8a87]">
               <p>
-                <span className="text-[#f6f4f2] font-medium">Valor de inscripción:</span> $ 40.000
+                <span className="text-[#f6f4f2] font-medium">Valores de Inscripción:</span> $ 40000
               </p>
+              <p>Consultar Beneficios para Grupos mayores a 10 nadadores.</p>
               <p>
-                <span className="text-[#f6f4f2] font-medium">Cupo:</span> 150 nadadores (ambas pruebas). Se considera dentro del cupo a quienes hayan abonado total o parcial.
+                <span className="text-[#f6f4f2] font-medium">IMPORTANTE:</span> para ingresar al Cupo de la Prueba se considera a quienes hayan realizado pago total o parcial.
               </p>
+
+              <div className="mt-2 rounded-xl bg-white/5 px-4 py-3 ring-1 ring-white/10">
+                <p className="text-[#f6f4f2] font-medium">Medios de Pago:</p>
+                <p className="mt-2">
+                  Anticipado a través de medios electrónicos informados, para lo cual deberá seguir las indicaciones en la sección Inscripciones. Una vez realizado el pago cargar comprobante en la sección INFORMAR PAGO del sitio web.
+                </p>
+              </div>
+
               <p>
-                <span className="text-[#f6f4f2] font-medium">Acreditación / Entrega de kit:</span> viernes 27/02 de 19:00 a 20:30 hs y domingo 01/03 de 07:00 a 09:00 hs.
+                <span className="text-[#f6f4f2] font-medium">ACREDITACION PRESENCIAL:</span> Entrega de Kit: viernes 27/02 de 19.00 a 20:30 hs. Domingo 01/03 de 07.00 a 09.00hs.
               </p>
+
               <p>
-                <span className="text-[#f6f4f2] font-medium">Seguridad:</span> uso obligatorio de torpedo / boya de flotación (o elemento similar) durante toda la competencia.
+                <span className="text-[#f6f4f2] font-medium">CUPO 150</span> nadadores en total ambas pruebas, se considera para el cupo quienes abonen la totalidad y/o realicen el anticipo del Derecho de Participación. La simple pre-inscripción no reserva lugar para el Cupo.
+              </p>
+
+              <div className="mt-2 rounded-xl bg-white/5 px-4 py-3 ring-1 ring-white/10">
+                <p className="text-[#f6f4f2] font-medium">Otros</p>
+                <ul className="mt-3 space-y-2">
+                  <li>• Traslados al lugar de Largada, Servicio de Bolsero.</li>
+                  <li>• Hidratación, mesa de frutas y bebida isotónica en llegada.</li>
+                  <li>• Servicio Médico y Seguro sobre Accidentes Personales.</li>
+                  <li>• Embarcaciones de guía y acompañamiento grupal</li>
+                  <li>• Lanchas para Fiscalización y rápida evacuación</li>
+                  <li>• Clasificación mediante sistema numerico</li>
+                  <li>• Refrigerio de cortesía individual.</li>
+                  <li>• Obsequios de auspiciantes.</li>
+                </ul>
+              </div>
+
+              <p className="mt-2 rounded-xl bg-[var(--brand)]/10 px-4 py-3 text-[#cfefff] ring-1 ring-[var(--brand)]/25">
+                OBLIGATORIO EL USO DE TORPEDO o similar elemento de Seguridad individual Durante todo el desarrollo de la competencia.
               </p>
             </div>
           </div>

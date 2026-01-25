@@ -25,7 +25,7 @@ export default function ContactoSection() {
             Email Coordinación
           </p>
           <p className="mt-3 text-sm font-medium text-[#f6f4f2]">
-            coordinacion@example.com
+            Vueltaalcurupi@gmail.com
           </p>
           <p className="mt-2 text-[13px] leading-[1.7] text-[#8f8a87]">
             Consultas generales e inscripciones. (Actualizar con email real)
@@ -41,7 +41,7 @@ export default function ContactoSection() {
           <p className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">
             Instagram Máster
           </p>
-          <p className="mt-3 text-sm font-medium text-[#f6f4f2]">@EchagueMasterNatacion</p>
+          <p className="mt-3 text-sm font-medium text-[#f6f4f2]">@natacionmasterechague</p>
           <p className="mt-2 text-[13px] leading-[1.7] text-[#8f8a87]">
             Subcomisión de Nadadores Máster
           </p>
@@ -56,7 +56,7 @@ export default function ContactoSection() {
           <p className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">
             Instagram Oficial
           </p>
-          <p className="mt-3 text-sm font-medium text-[#f6f4f2]">@AtleticoEchagueClubOficial</p>
+          <p className="mt-3 text-sm font-medium text-[#f6f4f2]">@atleticoechagueoficial</p>
           <p className="mt-2 text-[13px] leading-[1.7] text-[#8f8a87]">
             Atlético Echagüe Club
           </p>
