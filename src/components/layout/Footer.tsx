@@ -97,7 +97,7 @@ export default function Footer() {
             © {year} <span className="text-[#dddcda]">Systemium</span>. Todos los derechos reservados.
           </p>
           <p className="mt-2 text-[12px] leading-[1.7] text-[#9a9593] sm:mt-0 sm:text-right">
-            Diseño & desarrollo web: <span className="text-[#dddcda]">Bautista Heyde</span>
+            Diseño & desarrollo web: <span className="text-[#dddcda] whitespace-nowrap">Bautista Heyde</span>
             <span className="mx-2 text-[#dddcda]/30">•</span>
              bautistaheyde@hotmail.com
           </p>
