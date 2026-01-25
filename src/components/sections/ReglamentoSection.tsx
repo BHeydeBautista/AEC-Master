@@ -179,7 +179,7 @@ incumplimiento será motivo de descalificación inmediata.`;
   return (
     <section
       id="reglamento"
-      className="relative z-10 mx-auto max-w-7xl px-6 pb-24 pt-32 sm:px-8 lg:px-10"
+      className="scroll-mt-28 sm:scroll-mt-32 relative z-10 mx-auto max-w-7xl px-6 pb-24 pt-32 sm:px-8 lg:px-10"
     >
       <div className="max-w-[720px]">
         <p className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">

@@ -4,7 +4,7 @@ export default function InscripcionSection() {
   return (
     <section
       id="inscripcion"
-      className="relative z-10 mx-auto max-w-7xl px-6 pb-24 pt-10 sm:px-8 lg:px-10"
+      className="scroll-mt-28 sm:scroll-mt-32 relative z-10 mx-auto max-w-7xl px-6 pb-24 pt-10 sm:px-8 lg:px-10"
     >
       <div className="relative overflow-hidden rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md sm:p-8">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(17,179,255,0.18),transparent_55%)]" />

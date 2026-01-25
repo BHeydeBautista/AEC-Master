@@ -6,7 +6,7 @@ export default function DistancesSection() {
   return (
     <section
       id="distancias"
-      className="relative z-10 mx-auto min-h-[200vh] max-w-7xl px-6 pb-[90vh] pt-32 sm:min-h-[160vh] sm:px-8 sm:pb-40 sm:pt-36 lg:px-10"
+      className="scroll-mt-28 sm:scroll-mt-32 relative z-10 mx-auto min-h-[200vh] max-w-7xl px-6 pb-[90vh] pt-32 sm:min-h-[160vh] sm:px-8 sm:pb-40 sm:pt-36 lg:px-10"
     >
       <div className="w-full max-w-[540px]">
         <p className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">

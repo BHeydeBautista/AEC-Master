@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import { IBM_Plex_Sans } from "next/font/google";
 import { ScrollProvider } from "@/contexts/ScrollContext";
 
@@ -37,6 +38,7 @@ export default function RootLayout({
         <ScrollProvider>
           <Navbar />
           {children}
+          <Footer />
         </ScrollProvider>
       </body>
     </html>

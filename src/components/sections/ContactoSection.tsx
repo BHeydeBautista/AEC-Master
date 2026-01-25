@@ -2,7 +2,7 @@ export default function ContactoSection() {
   return (
     <section
       id="contacto"
-      className="relative z-10 mx-auto max-w-7xl px-6 pb-28 pt-10 sm:px-8 lg:px-10"
+      className="scroll-mt-28 sm:scroll-mt-32 relative z-10 mx-auto max-w-7xl px-6 pb-28 pt-10 sm:px-8 lg:px-10"
     >
       <div className="max-w-[720px]">
         <p className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">

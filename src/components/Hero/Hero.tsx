@@ -7,7 +7,7 @@ import SponsorsBar from "../layout/SponsorsBar";
 export default function Hero() {
   return (
     <>
-      <section id="hero" className="relative min-h-[200vh] overflow-hidden">
+      <section id="hero" className="scroll-mt-24 relative min-h-[200vh] overflow-hidden">
         <div className="sticky top-0 h-screen">
           <div className="relative z-50 mx-auto flex min-h-[100dvh] max-w-7xl items-start px-6 pt-24 sm:px-8 sm:pt-28 lg:px-10">
             <div className="w-full max-w-[540px]">
