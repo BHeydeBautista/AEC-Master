@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 
 const sponsors = [
-  { name: "Atlético Echagüe Club", src: "/img/aec.png" },
+  { name: "Atlético Echagüe Club", src: "/img/aec.jpeg" },
   { name: "Máster", src: "/img/logomaster.png" },
 ];
 

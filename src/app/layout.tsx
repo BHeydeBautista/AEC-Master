@@ -10,8 +10,12 @@ const plex = IBM_Plex_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Vuelta Isla Curupí",
+  title: "Atlético Echagüe Club",
   description: "Inscripción a la vuelta de la Isla Curupí",
+  icons: {
+    icon: [{ url: "/img/aec.jpeg", type: "image/png" }],
+    apple: [{ url: "/img/aec.jpeg", type: "image/png" }],
+  },
 };
 
 export default function RootLayout({
