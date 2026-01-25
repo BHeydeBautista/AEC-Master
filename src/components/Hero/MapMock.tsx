@@ -430,9 +430,34 @@ export default function MapMock(props: MapMockProps = {}) {
     (t) => ((1 - t) * 1 + t * 0.18) as number,
   );
 
-  // Opacidad global: se apaga al entrar en Reglamento (con easing).
-  const stageOpacity = useTransform(reglamentoProgress, (v) =>
+  // Opacidad global:
+  // - Se atenúa fuerte en Distancias para que el título/textos se lean.
+  // - Se apaga al entrar en Reglamento.
+  const baseStageOpacity = useTransform(reglamentoProgress, (v) =>
     1 - easeInOutCubic(v),
+  );
+
+  // 1 -> 0.12 al entrar a Distancias, pero vuelve a 1 al activarse `distance2`.
+  // (Queremos leer el título/textos intro; luego el mapa vuelve a verse normal.)
+  const distancesOpacityMultiplier = useTransform(
+    [distanciasProgress, distance2Progress],
+    (values) => {
+      if (!props.forceFixed) return 1;
+
+      const distT = easeInOutCubic(clamp01(values[0] as number));
+      const d2 = clamp01(values[1] as number);
+      // Fade-out del dimmer apenas entra la card 2.5km.
+      const d2T = easeInOutCubic(clamp01((d2 - 0.05) / 0.2));
+
+      const dimStrength = 0.88; // 0.88 => mínimo 0.12
+      const dim = dimStrength * distT * (1 - d2T);
+      return 1 - dim;
+    },
+  );
+
+  const stageOpacity = useTransform(
+    [baseStageOpacity, distancesOpacityMultiplier],
+    (values) => (values[0] as number) * (values[1] as number),
   );
 
   // Leve "shrink" mientras desaparece, para que no se perciba un corte seco.
