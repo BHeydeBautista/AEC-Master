@@ -1,4 +1,4 @@
-const GOOGLE_FORM_URL = "https://forms.gle/REEMPLAZAR_POR_TU_FORM";
+const GOOGLE_FORM_URL = "https://forms.gle/mTKnEmg75d297PyD6";
 
 export default function InscripcionSection() {
   return (
