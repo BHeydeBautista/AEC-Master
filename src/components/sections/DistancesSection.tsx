@@ -36,12 +36,9 @@ export default function DistancesSection() {
         >
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(17,179,255,0.18),transparent_55%)]" />
           <div className="relative">
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
               <span className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">
-                Promocional
-              </span>
-              <span className="rounded-full bg-[var(--brand)]/12 px-3 py-1 text-[11px] font-medium text-[var(--brand)] ring-1 ring-[var(--brand)]/25">
-                Recomendada
+                Carrera alternativa
               </span>
             </div>
 
@@ -53,7 +50,7 @@ export default function DistancesSection() {
             </div>
 
             <p className="mt-4 text-[14px] leading-[1.65] text-[#8f8a87]">
-              2,5 km prueba promocional, modalidad punto a punto.
+              2,5 km prueba alternativa, modalidad punto a punto.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3 text-[12px] text-[#9a9593]">
@@ -78,12 +75,9 @@ export default function DistancesSection() {
         >
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.10),transparent_55%)]" />
           <div className="relative">
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
               <span className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">
-                Competitiva
-              </span>
-              <span className="rounded-full bg-white/6 px-3 py-1 text-[11px] font-medium text-[#f6f4f2] ring-1 ring-white/12">
-                Federados
+                Carrera principal
               </span>
             </div>
 

@@ -37,7 +37,7 @@ export default function InscripcionSection() {
               </div>
 
               <p>
-                <span className="text-[#f6f4f2] font-medium">ACREDITACION PRESENCIAL:</span> Entrega de Kit: viernes 27/02 de 19.00 a 20:30 hs. Domingo 01/03 de 07.00 a 09.00hs.
+                <span className="text-[#f6f4f2] font-medium">ACREDITACION PRESENCIAL:</span> Entrega de Kit: Horario a confirmar...
               </p>
 
               <p>
@@ -64,14 +64,13 @@ export default function InscripcionSection() {
             </div>
           </div>
 
-          <a
-            className="pointer-events-auto inline-flex w-full items-center justify-center rounded-md bg-[var(--brand)] px-6 py-3 text-sm font-medium text-[#0b0b0b] shadow-[0_0_18px_rgba(17,179,255,0.28)] hover:bg-[var(--brand-600)] transition md:w-auto"
-            href={GOOGLE_FORM_URL}
-            target="_blank"
-            rel="noreferrer"
+          <button
+            className="inline-flex w-full items-center justify-center rounded-md bg-gray-500/40 px-6 py-3 text-sm font-medium text-[#bdbdbd] cursor-not-allowed md:w-auto"
+            disabled
+            type="button"
           >
-            Ir al formulario
-          </a>
+            Inscripción próximamente disponible
+          </button>
         </div>
       </div>
     </section>

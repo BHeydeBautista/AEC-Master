@@ -87,7 +87,7 @@ export default function ReglamentoSection() {
               </p>
             </div>
             <p>
-              ACREDITACION PRESENCIAL: Entrega de Kit: viernes 27/02 de 19.00 a 20:30 hs. Domingo 01/03 de 07.00 a 09.00hs.
+              ACREDITACION PRESENCIAL: Entrega de Kit: Horario a confirmar...
             </p>
             <p>
               CUPO 150 nadadores en total ambas pruebas, se considera para el cupo quienes abonen la totalidad y/o realicen el anticipo del Derecho de Participación. La simple pre-inscripción no reserva lugar para el Cupo.
