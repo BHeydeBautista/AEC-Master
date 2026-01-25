@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Sphere from "./Sphere";
 import SphereLoader from "./SphereLoader";
 import Sphere3D from "./Sphere3D";
@@ -7,13 +7,31 @@ import SphereLights from "./SphereLights";
 import HeroSection from "@/components/sections/HeroSection";
 import DistancesSection from "@/components/sections/DistancesSection";
 import ReglamentoSection from "@/components/sections/ReglamentoSection";
-import ResponsabilidadSection from "@/components/sections/ResponsabilidadSection";
-import InscripcionSection from "@/components/sections/InscripcionSection";
-import ContactoSection from "@/components/sections/ContactoSection";
-import SponsorsBar from "@/components/layout/SponsorsBar";
+import ResponsabilidadSection from "../sections/ResponsabilidadSection";
+import InscripcionSection from "../sections/InscripcionSection";
+import ContactoSection from "../sections/ContactoSection";
 
 export default function IntroController() {
   const [phase, setPhase] = useState<0 | 1 | 2>(0);
+  const originalOverflowRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+
+    if (originalOverflowRef.current === null) {
+      originalOverflowRef.current = document.body.style.overflow;
+    }
+
+    if (phase < 2) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = originalOverflowRef.current ?? "";
+    }
+
+    return () => {
+      document.body.style.overflow = originalOverflowRef.current ?? "";
+    };
+  }, [phase]);
 
   return (
     <div className="relative min-h-screen text-white">
@@ -39,6 +57,10 @@ export default function IntroController() {
       >
         <HeroSection />
         <DistancesSection />
+        <ReglamentoSection />
+        <ResponsabilidadSection />
+        <InscripcionSection />
+        <ContactoSection />
       </div>
     </div>
   );

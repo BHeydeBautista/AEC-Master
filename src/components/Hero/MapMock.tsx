@@ -15,6 +15,13 @@ function clamp01(value: number) {
   return Math.min(1, Math.max(0, value));
 }
 
+function easeInOutCubic(t: number) {
+  const x = clamp01(t);
+  return x < 0.5
+    ? 4 * x * x * x
+    : 1 - Math.pow(-2 * x + 2, 3) / 2;
+}
+
 function catmullRomToBezierPath(
   pts: Array<{ x: number; y: number }>,
   tension = 1.1,
@@ -101,6 +108,7 @@ export default function MapMock(props: MapMockProps = {}) {
   const routeGlowId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const distanciasSectionRef = useRef<HTMLElement | null>(null);
+  const reglamentoSectionRef = useRef<HTMLElement | null>(null);
   const distance2Ref = useRef<HTMLElement | null>(null);
   const distance5Ref = useRef<HTMLElement | null>(null);
 
@@ -139,6 +147,7 @@ export default function MapMock(props: MapMockProps = {}) {
 
   useEffect(() => {
     distanciasSectionRef.current = document.getElementById("distancias");
+    reglamentoSectionRef.current = document.getElementById("reglamento");
     distance2Ref.current = document.getElementById("distance2");
     distance5Ref.current = document.getElementById("distance5");
   }, []);
@@ -147,6 +156,13 @@ export default function MapMock(props: MapMockProps = {}) {
     target: distanciasSectionRef,
     // Dimming suave al acercarse a la sección
     offset: ["start 0.95", "start 0.55"],
+  });
+
+  const { scrollYProgress: reglamentoProgress } = useScroll({
+    target: reglamentoSectionRef,
+    // Fade-out más natural al empezar a entrar a Reglamento.
+    // Empieza apenas asoma (cerca del bottom del viewport) y se completa más arriba.
+    offset: ["start 0.98", "start 0.6"],
   });
 
   const { scrollYProgress: distance2Progress } = useScroll({
@@ -370,6 +386,16 @@ export default function MapMock(props: MapMockProps = {}) {
   const baseHalfOpacity = useTransform(
     dimT,
     (t) => ((1 - t) * 1 + t * 0.18) as number,
+  );
+
+  // Opacidad global: se apaga al entrar en Reglamento (con easing).
+  const stageOpacity = useTransform(reglamentoProgress, (v) =>
+    1 - easeInOutCubic(v),
+  );
+
+  // Leve "shrink" mientras desaparece, para que no se perciba un corte seco.
+  const stageScale = useTransform(reglamentoProgress, (v) =>
+    1 - 0.015 * easeInOutCubic(v),
   );
 
   // Importante: NO “prender” de golpe las medias barras cuando toca el trigger,
@@ -712,14 +738,19 @@ export default function MapMock(props: MapMockProps = {}) {
   const imageSizes = `${Math.round(mapSize * 3)}px`;
 
   return (
-    <div
+    <motion.div
       ref={containerRef}
       className={
         isInlineStage
           ? "pointer-events-none relative"
           : "pointer-events-none fixed inset-0 z-20 flex items-center justify-center"
       }
-      style={{ perspective: `${perspective}px` }}
+      style={{
+        perspective: `${perspective}px`,
+        opacity: isInlineStage ? 1 : stageOpacity,
+        scale: isInlineStage ? 1 : stageScale,
+        transformOrigin: "50% 50%",
+      }}
     >
       <motion.div
         className="relative"
@@ -1261,6 +1292,6 @@ export default function MapMock(props: MapMockProps = {}) {
           </div>
         </motion.div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }

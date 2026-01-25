@@ -34,9 +34,9 @@ export default function Hero() {
             position="absolute"
             className="z-20"
             offsetX={0}
-            offsetY={-240}
-            width={720}
-            height={360}
+            offsetY={-180}
+            width={740}
+            height={380}
           />
 
           <MapMock />
