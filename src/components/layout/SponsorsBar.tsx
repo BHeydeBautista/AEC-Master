@@ -30,7 +30,7 @@ export default function SponsorsBar({ className = "" }: SponsorsBarProps) {
           },
         },
       }}
-      className={`flex w-[220px] flex-col items-end gap-3 ${className}`}
+      className={`flex w-[200px] flex-col items-end gap-3 sm:w-[220px] ${className}`}
     >
       <span className="w-full text-right text-[11px] font-light tracking-[0.28em] text-[#8f8a87] uppercase">
         Sponsored by
@@ -54,7 +54,7 @@ export default function SponsorsBar({ className = "" }: SponsorsBarProps) {
               },
               scale: { type: "spring", stiffness: 420, damping: 26 },
             }}
-            className="group relative h-16 w-16 overflow-hidden rounded-full"
+            className="group relative h-14 w-14 overflow-hidden rounded-full sm:h-16 sm:w-16"
             title={s.name}
           >
             <div className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-white/10 transition group-hover:ring-white/20" />

@@ -6,7 +6,7 @@ export default function DistancesSection() {
   return (
     <section
       id="distancias"
-      className="relative z-10 mx-auto min-h-[160vh] max-w-7xl px-6 pb-40 pt-36 sm:px-8 lg:px-10"
+      className="relative z-10 mx-auto min-h-[200vh] max-w-7xl px-6 pb-[90vh] pt-32 sm:min-h-[160vh] sm:px-8 sm:pb-40 sm:pt-36 lg:px-10"
     >
       <div className="w-full max-w-[540px]">
         <p className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">
@@ -22,11 +22,11 @@ export default function DistancesSection() {
         </p>
       </div>
 
-      <div className="mt-16 flex w-full max-w-[540px] flex-col gap-[13.5rem] sm:gap-[23rem]">
+      <div className="mt-16 flex w-full max-w-[540px] flex-col gap-[38rem] sm:gap-[13.5rem] lg:gap-[23rem]">
         {/* 2.5KM */}
         <article
           id="distance2"
-          className="relative w-full overflow-hidden rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md"
+          className="sticky top-24 z-20 w-full overflow-hidden rounded-2xl bg-black/20 p-5 ring-1 ring-white/8 backdrop-blur-md sm:static sm:p-6"
         >
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(17,179,255,0.18),transparent_55%)]" />
           <div className="relative">
@@ -40,10 +40,10 @@ export default function DistancesSection() {
             </div>
 
             <div className="mt-6 flex items-baseline gap-2">
-              <span className="text-[44px] font-semibold leading-none tracking-tight text-[#f6f4f2]">
+              <span className="text-[38px] font-semibold leading-none tracking-tight text-[#f6f4f2] sm:text-[44px]">
                 2.5
               </span>
-              <span className="text-[16px] font-medium text-[#f6f4f2]">km</span>
+              <span className="text-[14px] font-medium text-[#f6f4f2] sm:text-[16px]">km</span>
             </div>
 
             <p className="mt-4 text-[14px] leading-[1.65] text-[#8f8a87]">
@@ -66,7 +66,7 @@ export default function DistancesSection() {
         {/* 5KM */}
         <motion.article
           id="distance5"
-          className="relative w-full overflow-hidden rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md"
+          className="sticky top-24 z-20 w-full overflow-hidden rounded-2xl bg-black/20 p-5 ring-1 ring-white/8 backdrop-blur-md sm:static sm:p-6"
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.45 }}
@@ -84,10 +84,10 @@ export default function DistancesSection() {
             </div>
 
             <div className="mt-6 flex items-baseline gap-2">
-              <span className="text-[44px] font-semibold leading-none tracking-tight text-[#f6f4f2]">
+              <span className="text-[38px] font-semibold leading-none tracking-tight text-[#f6f4f2] sm:text-[44px]">
                 5
               </span>
-              <span className="text-[16px] font-medium text-[#f6f4f2]">km</span>
+              <span className="text-[14px] font-medium text-[#f6f4f2] sm:text-[16px]">km</span>
             </div>
 
             <p className="mt-4 text-[14px] leading-[1.65] text-[#8f8a87]">

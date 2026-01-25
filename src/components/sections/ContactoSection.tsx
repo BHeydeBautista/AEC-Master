@@ -18,7 +18,7 @@ export default function ContactoSection() {
 
       <div className="mt-10 grid gap-5 md:grid-cols-3">
         <a
-          className="pointer-events-auto rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md hover:bg-white/5 transition"
+          className="pointer-events-auto rounded-2xl bg-black/20 p-5 ring-1 ring-white/8 backdrop-blur-md hover:bg-white/5 transition sm:p-6"
           href="mailto:coordinacion@example.com"
         >
           <p className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">
@@ -33,7 +33,7 @@ export default function ContactoSection() {
         </a>
 
         <a
-          className="pointer-events-auto rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md hover:bg-white/5 transition"
+          className="pointer-events-auto rounded-2xl bg-black/20 p-5 ring-1 ring-white/8 backdrop-blur-md hover:bg-white/5 transition sm:p-6"
           href="https://www.instagram.com/echaguemasternatacion/"
           target="_blank"
           rel="noreferrer"
@@ -48,7 +48,7 @@ export default function ContactoSection() {
         </a>
 
         <a
-          className="pointer-events-auto rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md hover:bg-white/5 transition"
+          className="pointer-events-auto rounded-2xl bg-black/20 p-5 ring-1 ring-white/8 backdrop-blur-md hover:bg-white/5 transition sm:p-6"
           href="https://www.instagram.com/atleticoechaguecluboficial/"
           target="_blank"
           rel="noreferrer"

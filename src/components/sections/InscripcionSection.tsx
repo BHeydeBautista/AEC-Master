@@ -6,7 +6,7 @@ export default function InscripcionSection() {
       id="inscripcion"
       className="relative z-10 mx-auto max-w-7xl px-6 pb-24 pt-10 sm:px-8 lg:px-10"
     >
-      <div className="relative overflow-hidden rounded-2xl bg-black/20 p-8 ring-1 ring-white/8 backdrop-blur-md">
+      <div className="relative overflow-hidden rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md sm:p-8">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(17,179,255,0.18),transparent_55%)]" />
         <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div className="max-w-[640px]">
@@ -38,7 +38,7 @@ export default function InscripcionSection() {
           </div>
 
           <a
-            className="pointer-events-auto inline-flex items-center justify-center rounded-md bg-[var(--brand)] px-6 py-3 text-sm font-medium text-[#0b0b0b] shadow-[0_0_18px_rgba(17,179,255,0.28)] hover:bg-[var(--brand-600)] transition"
+            className="pointer-events-auto inline-flex w-full items-center justify-center rounded-md bg-[var(--brand)] px-6 py-3 text-sm font-medium text-[#0b0b0b] shadow-[0_0_18px_rgba(17,179,255,0.28)] hover:bg-[var(--brand-600)] transition md:w-auto"
             href={GOOGLE_FORM_URL}
             target="_blank"
             rel="noreferrer"

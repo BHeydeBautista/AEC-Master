@@ -19,7 +19,7 @@ export default function ResponsabilidadSection() {
         </p>
       </div>
 
-      <div className="mt-10 max-w-[820px] rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md">
+      <div className="mt-10 max-w-[820px] rounded-2xl bg-black/20 p-5 ring-1 ring-white/8 backdrop-blur-md sm:p-6">
         <h3 className="text-sm font-semibold text-[#f6f4f2] mb-4">Visión de Futuro: Circuito Nacional</h3>
         <p className="text-[13px] leading-[1.7] text-[#8f8a87] mb-4">
           Este evento es el pilar para consolidar a Paraná en el mapa de las aguas

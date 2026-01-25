@@ -27,6 +27,7 @@ export default function RootLayout({
           bg-[#252423]
           text-[#dddcda]
           antialiased
+          overflow-x-hidden
         `}
       >
         <ScrollProvider>

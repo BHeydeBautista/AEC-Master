@@ -37,14 +37,14 @@ export default function SponsorsSection() {
               viewport={{ once: false, amount: 0.35 }}
               transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
               whileHover={{ scale: 1.015 }}
-              className="group relative flex items-center justify-center px-8 py-16"
+              className="group relative flex items-center justify-center px-6 py-10 sm:px-8 sm:py-16"
             >
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(17,179,255,0.10),transparent_60%)] opacity-70 transition group-hover:opacity-100" />
               <div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100">
                 <div className="absolute left-1/2 top-1/2 h-[260px] w-[260px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.10),transparent_60%)]" />
               </div>
 
-              <div className="relative h-[150px] w-[360px] max-w-full transition-transform duration-300 ease-out group-hover:scale-[1.03]">
+              <div className="relative h-[120px] w-[300px] max-w-full transition-transform duration-300 ease-out group-hover:scale-[1.03] sm:h-[150px] sm:w-[360px]">
                 <Image
                   src={s.src}
                   alt={s.name}

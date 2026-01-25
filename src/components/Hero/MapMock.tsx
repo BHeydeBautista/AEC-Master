@@ -88,6 +88,25 @@ function mapPxTo01(px: number, py: number) {
 }
 
 type MapMockProps = {
+  className?: string;
+  forceFixed?: boolean;
+  // Ajustes de animación del Hero (útil para mobile sin perder el “mismo efecto”)
+  heroRotateEndAt?: number;
+  heroRotateXStart?: number;
+  heroRotateXEnd?: number;
+  heroRotateZStart?: number;
+  heroRotateZEnd?: number;
+  heroScaleStart?: number;
+  heroScaleEnd?: number;
+  heroScaleEndAt?: number;
+  heroXStart?: number;
+  heroXMid?: number;
+  heroXEnd?: number;
+  heroXMidAt?: number;
+  heroXEndAt?: number;
+  heroYStart?: number;
+  heroYEnd?: number;
+  heroYEndAt?: number;
   tiltX?: MotionValue<number> | number;
   tiltZ?: MotionValue<number> | number;
   showIsland?: boolean;
@@ -130,15 +149,16 @@ export default function MapMock(props: MapMockProps = {}) {
   );
 
   const isInlineStage =
-    props.stageWidth !== undefined ||
-    props.stageHeight !== undefined ||
-    props.perspective !== undefined ||
-    props.mapSize !== undefined ||
-    props.mapTop !== undefined ||
-    props.glowTop !== undefined ||
-    props.imageScale !== undefined ||
-    props.tiltX !== undefined ||
-    props.tiltZ !== undefined;
+    !props.forceFixed &&
+    (props.stageWidth !== undefined ||
+      props.stageHeight !== undefined ||
+      props.perspective !== undefined ||
+      props.mapSize !== undefined ||
+      props.mapTop !== undefined ||
+      props.glowTop !== undefined ||
+      props.imageScale !== undefined ||
+      props.tiltX !== undefined ||
+      props.tiltZ !== undefined);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -178,14 +198,36 @@ export default function MapMock(props: MapMockProps = {}) {
     offset: ["start 0.85", "start 0.3"],
   });
 
-  // Rotación: empieza de perfil (65°) y se vuelve plano (0°)
-  const rotateX = useTransform(scrollYProgress, [0, 0.7], [-65, 0]);
-  const rotateZ = useTransform(scrollYProgress, [0, 0.7], [-25, 0]);
+  // Rotación: empieza de perfil y se vuelve plano.
+  const heroRotateEndAt = props.heroRotateEndAt ?? 0.7;
+  const rotateX = useTransform(
+    scrollYProgress,
+    [0, heroRotateEndAt],
+    [props.heroRotateXStart ?? -65, props.heroRotateXEnd ?? 0],
+  );
+  const rotateZ = useTransform(
+    scrollYProgress,
+    [0, heroRotateEndAt],
+    [props.heroRotateZStart ?? -25, props.heroRotateZEnd ?? 0],
+  );
 
   // Mantener Hero como antes; al acercarse a Distancias se corre a la derecha.
-  const scale = useTransform(scrollYProgress, [0, 0.7], [0.65, 1.15]);
-  const x = useTransform(scrollYProgress, [0, 0.45, 0.7], [0, 0, 420]);
-  const y = useTransform(scrollYProgress, [0, 0.7], [0, -200]);
+  const heroScaleEndAt = props.heroScaleEndAt ?? 0.7;
+  const scale = useTransform(
+    scrollYProgress,
+    [0, heroScaleEndAt],
+    [props.heroScaleStart ?? 0.65, props.heroScaleEnd ?? 1.15],
+  );
+  const x = useTransform(
+    scrollYProgress,
+    [0, props.heroXMidAt ?? 0.45, props.heroXEndAt ?? 0.7],
+    [props.heroXStart ?? 0, props.heroXMid ?? 0, props.heroXEnd ?? 420],
+  );
+  const y = useTransform(
+    scrollYProgress,
+    [0, props.heroYEndAt ?? 0.7],
+    [props.heroYStart ?? 0, props.heroYEnd ?? -200],
+  );
 
   const stageWidth = props.stageWidth ?? 560;
   const stageHeight = props.stageHeight ?? 760;
@@ -737,18 +779,22 @@ export default function MapMock(props: MapMockProps = {}) {
   // una resolución bastante mayor para que no se vea pixelado en pantallas HiDPI.
   const imageSizes = `${Math.round(mapSize * 3)}px`;
 
+  // Glow size: en modo inline (mobile) escalamos proporcionalmente al tamaño del mapa.
+  // (El +160 fijo se veía demasiado grande en pantallas chicas.)
+  const glowExtra = isInlineStage ? Math.round(mapSize * 0.35) : 160;
+
   return (
     <motion.div
       ref={containerRef}
-      className={
+      className={`${
         isInlineStage
           ? "pointer-events-none relative"
           : "pointer-events-none fixed inset-0 z-20 flex items-center justify-center"
-      }
+      } ${props.className ?? ""}`}
       style={{
         perspective: `${perspective}px`,
-        opacity: isInlineStage ? 1 : stageOpacity,
-        scale: isInlineStage ? 1 : stageScale,
+        opacity: stageOpacity,
+        scale: stageScale,
         transformOrigin: "50% 50%",
       }}
     >
@@ -767,8 +813,8 @@ export default function MapMock(props: MapMockProps = {}) {
           className="pointer-events-none absolute left-1/2 -translate-x-1/2 rounded-full bg-[radial-gradient(circle,_rgba(255,255,255,0.06),_transparent_60%)]"
           style={{
             top: appliedGlowTop,
-            width: mapSize + 160,
-            height: mapSize + 160,
+            width: mapSize + glowExtra,
+            height: mapSize + glowExtra,
           }}
         />
 

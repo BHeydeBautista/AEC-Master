@@ -548,7 +548,7 @@ export default function FloatingIsland({
   offsetY = -220,
   width = 800,
   height = 400,
-  className = "",
+  className = "z-10",
   style,
 }: FloatingIslandProps) {
   const { scrollProgress } = useScroll();
@@ -574,7 +574,7 @@ export default function FloatingIsland({
 
   return (
     <div
-      className={`${position} pointer-events-none z-10 ${className}`}
+      className={`${position} pointer-events-none ${className}`}
       style={{
         left: "50%",
         top: "50%",

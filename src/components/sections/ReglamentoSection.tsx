@@ -196,7 +196,7 @@ incumplimiento será motivo de descalificación inmediata.`;
       </div>
 
       <div className="mt-10 grid gap-5 md:grid-cols-3">
-        <article className="rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md">
+        <article className="rounded-2xl bg-black/20 p-5 ring-1 ring-white/8 backdrop-blur-md sm:p-6">
           <h3 className="text-sm font-semibold text-[#f6f4f2]">Rescate Acuático</h3>
           <p className="mt-3 text-[13px] leading-[1.65] text-[#8f8a87]">
             Un guardavidas cada 15 nadadores, flota de kayaks y lanchas
@@ -205,7 +205,7 @@ incumplimiento será motivo de descalificación inmediata.`;
           </p>
         </article>
 
-        <article className="rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md">
+        <article className="rounded-2xl bg-black/20 p-5 ring-1 ring-white/8 backdrop-blur-md sm:p-6">
           <h3 className="text-sm font-semibold text-[#f6f4f2]">Asistencia Médica</h3>
           <p className="mt-3 text-[13px] leading-[1.65] text-[#8f8a87]">
             Ambulancia de alta complejidad en punto de llegada y gazebos de
@@ -213,7 +213,7 @@ incumplimiento será motivo de descalificación inmediata.`;
           </p>
         </article>
 
-        <article className="rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md">
+        <article className="rounded-2xl bg-black/20 p-5 ring-1 ring-white/8 backdrop-blur-md sm:p-6">
           <h3 className="text-sm font-semibold text-[#f6f4f2]">Seguros y Cronometraje</h3>
           <p className="mt-3 text-[13px] leading-[1.65] text-[#8f8a87]">
             Póliza de accidentes personales para cada participante y
@@ -223,7 +223,7 @@ incumplimiento será motivo de descalificación inmediata.`;
         </article>
       </div>
 
-      <div className="mt-10 rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md">
+      <div className="mt-10 rounded-2xl bg-black/20 p-5 ring-1 ring-white/8 backdrop-blur-md sm:p-6">
         <h3 className="text-sm font-semibold text-[#f6f4f2] mb-4">El Pasillo de Aliento</h3>
         <p className="text-[13px] leading-[1.7] text-[#8f8a87]">
           El 80% de la carrera se desarrolla frente a la Costanera de Paraná,
@@ -233,12 +233,12 @@ incumplimiento será motivo de descalificación inmediata.`;
         </p>
       </div>
 
-      <details className="mt-10 rounded-2xl bg-black/20 p-6 ring-1 ring-white/8 backdrop-blur-md">
+      <details className="mt-10 rounded-2xl bg-black/20 p-5 ring-1 ring-white/8 backdrop-blur-md sm:p-6">
         <summary className="cursor-pointer select-none text-sm font-semibold text-[#f6f4f2]">
           Reglamento completo (texto oficial)
         </summary>
         <div className="mt-4">
-          <pre className="max-h-[520px] overflow-auto whitespace-pre-wrap text-[12px] leading-[1.65] text-[#c9c5c2]">
+          <pre className="max-h-[360px] overflow-auto whitespace-pre-wrap text-[11px] leading-[1.65] text-[#c9c5c2] sm:max-h-[520px] sm:text-[12px]">
             {REGLAMENTO_OFICIAL}
           </pre>
         </div>

@@ -127,27 +127,6 @@ export default function SphereLights({ active, onFinish }: Props) {
           />
         </g>
       ))}
-
-      {/* Diagonal dotted path */}
-      {Array.from({ length: 18 }).map((_, i) => {
-        const startX = 210, startY = 180; // top-left inside the circle
-        const endX = 390, endY = 420; // bottom-right
-        const t = i / 17;
-        const cx = startX + (endX - startX) * t;
-        const cy = startY + (endY - startY) * t;
-        return (
-          <circle
-            key={`dot-${i}`}
-            className="dot"
-            cx={cx}
-            cy={cy}
-            r={6}
-            fill="#ff6b6b"
-            opacity={0}
-            filter="url(#glow)"
-          />
-        );
-      })}
     </svg>
   );
 }

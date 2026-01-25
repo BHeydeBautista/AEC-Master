@@ -8,7 +8,7 @@ export default function Navbar() {
     <header className="fixed top-0 left-0 w-full z-50">
       <div className="absolute inset-0 bg-[#0b0b0b]/70 backdrop-blur-md" />
 
-      <nav className="relative max-w-7xl mx-auto px-10 py-6 flex items-center justify-between">
+      <nav className="relative mx-auto flex max-w-7xl items-center justify-between px-6 py-4 sm:px-10 sm:py-6">
         <motion.a
           href="#hero"
           className="pointer-events-auto flex items-center gap-3"
@@ -27,7 +27,8 @@ export default function Navbar() {
           </div>
         </motion.a>
 
-        <ul className="flex items-center gap-8 text-xs tracking-wide text-[#9a9593]">
+        {/* Desktop nav */}
+        <ul className="hidden items-center gap-8 text-xs tracking-wide text-[#9a9593] sm:flex">
           <li>
             <a
               className="pointer-events-auto hover:text-[var(--brand)] transition-colors"
@@ -65,6 +66,34 @@ export default function Navbar() {
             </motion.a>
           </li>
         </ul>
+
+        {/* Mobile nav */}
+        <div className="sm:hidden pointer-events-auto">
+          <details className="relative">
+            <summary className="list-none select-none rounded-md bg-white/5 px-3 py-2 text-xs font-medium tracking-wide text-[#f6f4f2] ring-1 ring-white/10">
+              Menú
+            </summary>
+            <div className="absolute right-0 mt-3 w-56 overflow-hidden rounded-xl bg-[#0b0b0b]/95 ring-1 ring-white/10 backdrop-blur-md">
+              <a className="block px-4 py-3 text-sm text-[#dddcda] hover:bg-white/5" href="#reglamento">
+                Reglamento
+              </a>
+              <a className="block px-4 py-3 text-sm text-[#dddcda] hover:bg-white/5" href="#distancias">
+                Recorridos
+              </a>
+              <a className="block px-4 py-3 text-sm text-[#dddcda] hover:bg-white/5" href="#inscripcion">
+                Inscripción
+              </a>
+              <a
+                className="block px-4 py-3 text-sm font-medium text-[#0b0b0b] bg-[var(--brand)] hover:bg-[var(--brand-600)] transition"
+                href={GOOGLE_FORM_URL}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Inscribirme
+              </a>
+            </div>
+          </details>
+        </div>
       </nav>
       {/* Glow underline */}
       <div className="pointer-events-none h-[2px] w-full bg-gradient-to-r from-transparent via-[var(--brand)] to-transparent opacity-40" />

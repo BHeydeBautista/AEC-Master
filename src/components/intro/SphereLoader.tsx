@@ -50,7 +50,7 @@ export default function SphereLoader({ active, onFinish }: Props) {
       ref={root}
       className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none"
     >
-      <div className="relative w-[520px] h-[520px]">
+      <div className="relative h-[520px] w-[520px] scale-[0.72] sm:scale-100">
         {/* Centro con logo (en vez de fondo borroso) */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           <div className="relative w-[230px] h-[230px]">
