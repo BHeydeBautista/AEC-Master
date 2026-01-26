@@ -106,7 +106,7 @@ export default function ReglamentoSection() {
               </p>
             </div>
             <p>
-              ACREDITACION PRESENCIAL: Entrega de Kit: Horario a confirmar...
+              ACREDITACION PRESENCIAL: Entrega de Kit: Sabado, Horario a confirmar...
             </p>
             <p>
               CUPO 150 nadadores en total ambas pruebas, se considera para el cupo quienes abonen la totalidad y/o realicen el anticipo del Derecho de Participación. La simple pre-inscripción no reserva lugar para el Cupo.

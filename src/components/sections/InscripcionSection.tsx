@@ -34,10 +34,14 @@ export default function InscripcionSection() {
                 <p className="mt-2">
                   Anticipado a través de medios electrónicos informados, para lo cual deberá seguir las indicaciones en la sección Inscripciones. Una vez realizado el pago cargar comprobante en la sección INFORMAR PAGO del sitio web.
                 </p>
+                <div className="mt-3">
+                  <p className="text-[#f6f4f2] font-medium">ALIAS: <span className="font-normal">FBRONDO2.COCOS</span></p>
+                  <p className="text-[#f6f4f2] font-medium">BVU: <span className="font-normal">0000053600000036058538</span></p>
+                </div>
               </div>
 
               <p>
-                <span className="text-[#f6f4f2] font-medium">ACREDITACION PRESENCIAL:</span> Entrega de Kit: Horario a confirmar...
+                <span className="text-[#f6f4f2] font-medium">ACREDITACION PRESENCIAL:</span> Entrega de Kit: sábado, horario a confirmar
               </p>
 
               <p>
@@ -64,13 +68,15 @@ export default function InscripcionSection() {
             </div>
           </div>
 
-          <button
-            className="inline-flex w-full items-center justify-center rounded-md bg-gray-500/40 px-6 py-3 text-sm font-medium text-[#bdbdbd] cursor-not-allowed md:w-auto"
-            disabled
+          <a
+            href={GOOGLE_FORM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex w-full items-center justify-center rounded-md bg-[var(--brand)]/90 hover:bg-[var(--brand)] text-white px-6 py-3 text-sm font-medium md:w-auto transition-colors duration-200"
             type="button"
           >
-            Inscripción próximamente disponible
-          </button>
+            Inscribirse
+          </a>
         </div>
       </div>
     </section>
