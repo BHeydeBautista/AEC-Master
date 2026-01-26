@@ -1,14 +1,32 @@
 "use client";
 
 import Disclosure from "@/components/ui/Disclosure";
+import { useEffect, useRef, useState } from "react";
 
 export default function ReglamentoSection() {
+  const [open, setOpen] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.innerWidth >= 768) return; // Solo mobile
+    const handleScroll = () => {
+      if (!sectionRef.current) return;
+      const rect = sectionRef.current.getBoundingClientRect();
+      const inView = rect.top < window.innerHeight && rect.bottom > 0;
+      if (inView) setOpen(true);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   return (
     <section
       id="reglamento"
+      ref={sectionRef}
       className="scroll-mt-28 sm:scroll-mt-32 relative z-10 mx-auto max-w-7xl px-6 pb-24 pt-32 sm:px-8 lg:px-10"
     >
-      <div className="max-w-[720px]">
+      <div className="max-w-[720px] relative">
         <p className="text-[11px] uppercase tracking-[0.26em] text-[#9a9593]">Reglamento</p>
         <h2 className="mt-4 text-[28px] font-semibold tracking-tight text-[#f6f4f2] sm:text-[34px]">
           Reglamento oficial (texto completo)
@@ -18,7 +36,7 @@ export default function ReglamentoSection() {
         </p>
       </div>
 
-      <div className="mt-10 grid gap-5 md:grid-cols-3">
+      <div className="mt-10 grid gap-5 md:grid-cols-3 relative">
         <article className="rounded-2xl bg-black/20 p-5 ring-1 ring-white/8 backdrop-blur-md sm:p-6">
           <h3 className="text-sm font-semibold text-[#f6f4f2]">Seguridad</h3>
           <p className="mt-3 text-[13px] leading-[1.7] text-[#8f8a87]">
@@ -46,6 +64,7 @@ export default function ReglamentoSection() {
         buttonClassName="flex w-full items-center cursor-pointer select-none text-sm font-semibold text-[#f6f4f2]"
         panelClassName="mt-5 space-y-6 text-[13px] leading-[1.8] text-[#c9c5c2]"
         title={"Ver reglamento completo (texto oficial)"}
+        {...(typeof window !== "undefined" && window.innerWidth < 768 ? { defaultOpen: open } : { defaultOpen: false })}
       >
           <header className="space-y-1">
             <h3 className="text-base font-semibold text-[#f6f4f2]">PRUEBA DE NATACION EN AGUAS ABIERTAS</h3>
