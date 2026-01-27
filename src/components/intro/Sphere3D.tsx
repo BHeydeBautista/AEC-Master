@@ -41,7 +41,11 @@ export default function Sphere3D() {
   }, []);
   return (
     <div ref={containerRef} className="absolute inset-[24px] rounded-full overflow-hidden z-0 sm:inset-[40px] pointer-events-none">
-      <Canvas camera={{ position: [0, 0, 6], fov: 45 }} dpr={[1, 2]}>
+      <Canvas
+        camera={{ position: [0, 0, 6], fov: 45 }}
+        dpr={[1, 2]}
+        style={{ pointerEvents: "none" }}
+      >
         <ambientLight intensity={0.35} />
         <directionalLight position={[5, 5, 5]} intensity={0.6} />
         <directionalLight position={[-5, -3, -5]} intensity={0.2} />

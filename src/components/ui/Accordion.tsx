@@ -8,12 +8,14 @@ interface AccordionProps {
   title: string;
   children: React.ReactNode;
   className?: string;
+  contentClassName?: string;
 }
 
 export default function Accordion({
   title,
   children,
   className,
+  contentClassName,
 }: AccordionProps) {
   const [open, setOpen] = useState(false);
 
@@ -54,7 +56,12 @@ export default function Accordion({
         )}
       >
         <div className="min-h-0">
-          <div className="mt-4 rounded-2xl bg-black/30 p-5 ring-1 ring-white/10 backdrop-blur-md space-y-6">
+          <div
+            className={
+              contentClassName ??
+              "mt-4 rounded-2xl bg-black/30 p-5 ring-1 ring-white/10 backdrop-blur-md space-y-6"
+            }
+          >
             {children}
           </div>
         </div>

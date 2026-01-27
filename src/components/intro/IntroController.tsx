@@ -16,6 +16,7 @@ import ContactoSection from "../sections/ContactoSection";
 export default function IntroController() {
   const [phase, setPhase] = useState<0 | 1 | 2>(0);
   const [isReglamento, setIsReglamento] = useState(false);
+  const [showIntroLayer, setShowIntroLayer] = useState(true);
   const reglamentoRef = useRef<HTMLElement | null>(null);
   const originalOverflowRef = useRef<string | null>(null);
 
@@ -55,20 +56,34 @@ export default function IntroController() {
     };
   }, [phase]);
 
+  useEffect(() => {
+    // Mantener la capa del intro un instante para que se vea el fade-out,
+    // y luego desmontarla por completo para evitar que el canvas quede arriba.
+    if (phase < 2) {
+      setShowIntroLayer(true);
+      return;
+    }
+
+    const t = window.setTimeout(() => setShowIntroLayer(false), 650);
+    return () => window.clearTimeout(t);
+  }, [phase]);
+
   return (
     <div className="relative min-h-screen text-white">
-      <div
-        className={`fixed inset-0 z-[150] transition-opacity duration-600 ${
-          phase < 2 ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-      >
-        <div className="absolute inset-0 bg-[#0b0b0b]" />
-        <Sphere>
-          {!isReglamento && <Sphere3D />}
-          <SphereLoader active={phase === 0} onFinish={() => setPhase(1)} />
-          <SphereLights active={phase === 1} onFinish={() => setPhase(2)} />
-        </Sphere>
-      </div>
+      {showIntroLayer && (
+        <div
+          className={`fixed inset-0 z-[150] transition-opacity duration-600 ${
+            phase < 2 ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+        >
+          <div className="absolute inset-0 bg-[#0b0b0b]" />
+          <Sphere>
+            {!isReglamento && phase < 2 && <Sphere3D />}
+            <SphereLoader active={phase === 0} onFinish={() => setPhase(1)} />
+            <SphereLights active={phase === 1} onFinish={() => setPhase(2)} />
+          </Sphere>
+        </div>
+      )}
 
       <div
         className={`transition-opacity duration-700 ${
