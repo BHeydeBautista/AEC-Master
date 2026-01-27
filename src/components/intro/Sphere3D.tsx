@@ -2,7 +2,7 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 
 function RotatingSphere() {
   const mesh = useRef<THREE.Mesh>(null);
@@ -27,9 +27,20 @@ function RotatingSphere() {
   );
 }
 
+
 export default function Sphere3D() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    // Forzar pointer-events:none en el canvas generado por three.js
+    if (containerRef.current) {
+      const canvas = containerRef.current.querySelector("canvas");
+      if (canvas) {
+        canvas.style.pointerEvents = "none";
+      }
+    }
+  }, []);
   return (
-    <div className="absolute inset-[24px] rounded-full overflow-hidden z-0 sm:inset-[40px]">
+    <div ref={containerRef} className="absolute inset-[24px] rounded-full overflow-hidden z-0 sm:inset-[40px] pointer-events-none">
       <Canvas camera={{ position: [0, 0, 6], fov: 45 }} dpr={[1, 2]}>
         <ambientLight intensity={0.35} />
         <directionalLight position={[5, 5, 5]} intensity={0.6} />

@@ -1,65 +1,55 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { animate, stagger } from "animejs";
+import { animate, stagger, createScope } from "animejs";
 
 type Props = { active: boolean; onFinish: () => void };
 
 export default function SphereLights({ active, onFinish }: Props) {
-  const ref = useRef<SVGSVGElement>(null);
+  const root = useRef<SVGSVGElement>(null);
+  const scopeRef = useRef<ReturnType<typeof createScope> | null>(null);
 
   useEffect(() => {
-    if (!active || !ref.current) return;
+    if (!active || !root.current) return;
 
-    // 1) Draw outside arcs
-    const redAnim = animate(".arc.red", {
-      strokeDashoffset: [50, 0],
-      opacity: [0, 1],
-      duration: 800,
-      ease: "out(3)",
+    const scope = createScope({ root });
+    scopeRef.current = scope;
+
+    scope.add(() => {
+      animate(".arc.red", {
+        strokeDashoffset: [50, 0],
+        opacity: [0, 1],
+        duration: 800,
+        ease: "out(3)",
+      });
+
+      animate(".arc.green", {
+        strokeDashoffset: [50, 0],
+        opacity: [0, 1],
+        duration: 800,
+        ease: "out(3)",
+        delay: 150,
+      });
+
+      animate(".inner-tick", {
+        opacity: [0, 1],
+        scaleY: [0.4, 1],
+        duration: 500,
+        delay: stagger(12),
+        ease: "out(3)",
+      });
+
+      const total = 800 + 150 + 500 + 60 * 15 + 200;
+      const t = setTimeout(onFinish, total);
+
+      return () => clearTimeout(t);
     });
 
-    const greenAnim = animate(".arc.green", {
-      strokeDashoffset: [50, 0],
-      opacity: [0, 1],
-      duration: 800,
-      ease: "out(3)",
-      delay: 150,
-    });
-
-    // 2) Inner ticks
-    const ticksAnim = animate(".inner-tick", {
-      opacity: [0, 1],
-      scaleY: [0.4, 1],
-      duration: 500,
-      delay: stagger(12),
-      ease: "out(3)",
-    });
-
-    // 3) Diagonal dots travel effect (sequential reveal)
-    const dotsAnim = animate(".dot", {
-      opacity: [0, 1],
-      scale: [0, 1],
-      duration: 300,
-      delay: stagger(60),
-      ease: "out(3)",
-    });
-
-    // 4) Finish after the sequence
-    const total = 800 + 150 + 500 + 60 * 15 + 200; // rough total timing
-    const t = setTimeout(onFinish, total);
-
-    return () => {
-      redAnim.pause();
-      greenAnim.pause();
-      ticksAnim.pause();
-      dotsAnim.pause();
-      clearTimeout(t);
-    };
+    return () => scopeRef.current?.revert();
   }, [active, onFinish]);
 
   return (
     <svg
-      ref={ref}
+      ref={root}
       viewBox="0 0 600 600"
       className={`absolute inset-0 pointer-events-none transition-opacity duration-500 ${
         active ? "opacity-100" : "opacity-0"

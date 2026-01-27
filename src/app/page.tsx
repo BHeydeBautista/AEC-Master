@@ -1,9 +1,10 @@
+import ClientOnly from "@/utils/ClientOnly";
 import IntroController from "@/components/intro/IntroController";
 
 export default function HomePage() {
   return (
-    <main className="min-h-[100dvh] overflow-hidden">
+    <ClientOnly>
       <IntroController />
-    </main>
+    </ClientOnly>
   );
 }
