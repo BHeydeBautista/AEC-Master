@@ -36,7 +36,7 @@ export default function InscripcionSection() {
                 </p>
                 <div className="mt-3">
                   <p className="text-[#f6f4f2] font-medium">ALIAS: <span className="font-normal">FBRONDO2.COCOS</span></p>
-                  <p className="text-[#f6f4f2] font-medium">BVU: <span className="font-normal">0000053600000036058538</span></p>
+                  <p className="text-[#f6f4f2] font-medium">CVU: <span className="font-normal">0000053600000036058538</span></p>
                 </div>
               </div>
 
