@@ -6,6 +6,7 @@ const sponsors = [
   { name: "Atlético Echagüe Club", src: "/img/aec.jpeg" },
   { name: "Máster", src: "/img/logomaster.png" },
   { name: "Systemium", src: "/img/systemium.jpeg" },
+  { name: "ER Deportes", src: "/img/ERDeportes.jpeg", featured: true },
 ];
 
 export default function SponsorsSection() {

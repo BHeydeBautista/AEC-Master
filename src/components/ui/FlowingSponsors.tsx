@@ -12,6 +12,7 @@ import type { MotionValue } from "framer-motion";
 interface Sponsor {
   name: string;
   src: string;
+  featured?: boolean;
 }
 
 const ITEM_WIDTH = 160;
@@ -47,6 +48,8 @@ function SponsorItem({
     [-120, 160, -120]
   );
 
+  const glowOpacity = useTransform(itemX, [-260, 0, 260], [0.06, 0.22, 0.06]);
+
   return (
     <motion.div
       style={{
@@ -61,12 +64,26 @@ function SponsorItem({
                  items-center justify-center
                  sm:h-28 sm:w-28"
     >
+      {sponsor.featured ? (
+        <motion.div
+          aria-hidden
+          style={{ opacity: glowOpacity }}
+          className="pointer-events-none absolute -inset-6 rounded-full blur-md
+                     bg-[radial-gradient(circle,rgba(17,179,255,0.35),transparent_62%)]
+                     animate-[sponsorPulse_5.5s_ease-in-out_infinite]"
+        />
+      ) : null}
+
       <Image
         src={sponsor.src}
         alt={sponsor.name}
         width={160}
         height={160}
-        className="object-contain"
+        className={
+          sponsor.featured
+            ? "object-contain drop-shadow-[0_0_18px_rgba(17,179,255,0.18)]"
+            : "object-contain"
+        }
       />
     </motion.div>
   );

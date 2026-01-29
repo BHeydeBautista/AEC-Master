@@ -47,5 +47,26 @@ body {
   animation: marquee var(--duration, 36s) linear infinite;
 }
 
+@keyframes sponsorPulse {
+  0%,
+  100% {
+    transform: scale(0.96);
+    filter: blur(10px);
+  }
+  50% {
+    transform: scale(1.04);
+    filter: blur(14px);
+  }
+}
+
+@keyframes sponsorSheen {
+  0% {
+    transform: translateX(-60%) rotate(12deg);
+  }
+  100% {
+    transform: translateX(60%) rotate(12deg);
+  }
+}
+
 
 

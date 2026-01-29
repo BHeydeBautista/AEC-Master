@@ -74,7 +74,7 @@ export default function Hero() {
             <MapMock />
           </div>
 
-          <div className="pointer-events-auto absolute bottom-6 right-4 z-30 select-none sm:bottom-10 sm:right-10">
+          <div className="pointer-events-auto absolute right-1 bottom-14 z-30 select-none sm:right-6 sm:bottom-8">
             <SponsorsBar />
           </div>
         </div>
