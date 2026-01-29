@@ -9,7 +9,7 @@ import {
 } from "framer-motion";
 import Image from "next/image";
 import type { MotionValue } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 interface Sponsor {
   name: string;
@@ -22,14 +22,43 @@ const ITEM_WIDTH = 160;
 const SPEED = 0.045;
 const DUPLICATE_COUNT = 3;
 
+function useReducedFxForMobile() {
+  const [reducedFx, setReducedFx] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const coarse = window.matchMedia?.("(pointer: coarse)");
+    const small = window.matchMedia?.("(max-width: 640px)");
+
+    const update = () => {
+      setReducedFx(Boolean(coarse?.matches || small?.matches));
+    };
+
+    update();
+
+    coarse?.addEventListener?.("change", update);
+    small?.addEventListener?.("change", update);
+
+    return () => {
+      coarse?.removeEventListener?.("change", update);
+      small?.removeEventListener?.("change", update);
+    };
+  }, []);
+
+  return reducedFx;
+}
+
 function SponsorItem({
   sponsor,
   index,
   x,
+  reducedFx,
 }: {
   sponsor: Sponsor;
   index: number;
   x: MotionValue<number>;
+  reducedFx: boolean;
 }) {
   const itemX = useTransform(x, (v) => v + index * ITEM_WIDTH);
 
@@ -77,10 +106,30 @@ function SponsorItem({
         void (async () => {
           await contentControls.start({
             y: variant === "featured" ? -18 : variant === "club" ? -14 : -12,
-            scale: variant === "featured" ? 1.18 : 1.12,
+            scale: reducedFx ? 1.08 : variant === "featured" ? 1.18 : 1.12,
             rotateZ: variant === "club" ? -6 : 0,
             transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
           });
+
+          // En mobile, recortamos FX costosos (clipPath/blur/mix-blend) para ganar FPS.
+          if (reducedFx) {
+            if (variant === "featured") {
+              await contentControls.start({
+                rotateY: 360,
+                transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
+              });
+            }
+
+            await contentControls.start({
+              y: 0,
+              x: 0,
+              scale: 1,
+              rotateZ: 0,
+              rotateY: 0,
+              transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+            });
+            return;
+          }
 
           if (variant === "water") {
             waterFx.set({ opacity: 0.95, clipPath: "inset(70% 0% 0% 0% round 999px)" });
@@ -130,7 +179,7 @@ function SponsorItem({
     });
 
     return () => unsubscribe();
-  }, [focus, contentControls, waterFx, techFx, featuredFx, variant]);
+  }, [focus, contentControls, waterFx, techFx, featuredFx, variant, reducedFx]);
 
   return (
     <motion.div
@@ -143,6 +192,7 @@ function SponsorItem({
         rotateX: "12deg",
         rotateY,
         rotateZ,
+        willChange: "transform, opacity",
       }}
       className="absolute left-1/2 top-1/2 flex
                  h-24 w-24 -translate-x-1/2 -translate-y-1/2
@@ -194,8 +244,12 @@ function SponsorItem({
           <motion.div
             aria-hidden
             style={{ opacity: waterOpacity }}
-            animate={waterFx}
-            initial={{ opacity: 0, clipPath: "inset(70% 0% 0% 0% round 999px)" }}
+            animate={reducedFx ? undefined : waterFx}
+            initial={
+              reducedFx
+                ? { opacity: 0 }
+                : { opacity: 0, clipPath: "inset(70% 0% 0% 0% round 999px)" }
+            }
             className="pointer-events-none absolute -inset-7 rounded-full overflow-hidden"
           >
             <div
@@ -203,23 +257,25 @@ function SponsorItem({
               style={{
                 background:
                   "radial-gradient(circle at 35% 70%, rgba(255,255,255,0.18), transparent 55%), radial-gradient(circle at 70% 40%, rgba(17,179,255,0.26), transparent 60%), linear-gradient(180deg, rgba(17,179,255,0.10), rgba(17,179,255,0.0))",
-                filter: "blur(10px)",
+                filter: reducedFx ? "blur(6px)" : "blur(10px)",
                 mixBlendMode: "screen",
                 WebkitMaskImage: "radial-gradient(circle, black 58%, transparent 74%)",
                 maskImage: "radial-gradient(circle, black 58%, transparent 74%)",
               }}
             />
-            <div
-              className="absolute -left-[60%] top-0 h-full w-[120%]"
-              style={{
-                background:
-                  "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.14) 18%, transparent 40%)",
-                filter: "blur(12px)",
-                transform: "skewX(-18deg)",
-                animation: "sponsorSheen 2.8s linear infinite",
-                opacity: 0.55,
-              }}
-            />
+            {reducedFx ? null : (
+              <div
+                className="absolute -left-[60%] top-0 h-full w-[120%]"
+                style={{
+                  background:
+                    "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.14) 18%, transparent 40%)",
+                  filter: "blur(12px)",
+                  transform: "skewX(-18deg)",
+                  animation: "sponsorSheen 2.8s linear infinite",
+                  opacity: 0.55,
+                }}
+              />
+            )}
           </motion.div>
         ) : null}
 
@@ -236,31 +292,35 @@ function SponsorItem({
                 background:
                   "radial-gradient(circle at 30% 30%, rgba(120,255,220,0.18), transparent 55%), radial-gradient(circle at 70% 70%, rgba(17,179,255,0.14), transparent 58%)",
                 mixBlendMode: "screen",
-                filter: "blur(2px)",
+                filter: reducedFx ? "blur(0px)" : "blur(2px)",
                 WebkitMaskImage: "radial-gradient(circle, black 58%, transparent 74%)",
                 maskImage: "radial-gradient(circle, black 58%, transparent 74%)",
               }}
             />
-            <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  "repeating-linear-gradient(180deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 6px)",
-                opacity: 0.55,
-              }}
-            />
+            {reducedFx ? null : (
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "repeating-linear-gradient(180deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 6px)",
+                  opacity: 0.55,
+                }}
+              />
+            )}
 
-            <motion.div
-              className="absolute -left-[60%] top-0 h-full w-[120%]"
-              animate={techFx}
-              initial={{ opacity: 0, x: "-30%" }}
-              style={{
-                background:
-                  "linear-gradient(90deg, transparent 0%, rgba(120,255,220,0.22) 20%, transparent 42%)",
-                filter: "blur(10px)",
-                transform: "skewX(-18deg)",
-              }}
-            />
+            {reducedFx ? null : (
+              <motion.div
+                className="absolute -left-[60%] top-0 h-full w-[120%]"
+                animate={techFx}
+                initial={{ opacity: 0, x: "-30%" }}
+                style={{
+                  background:
+                    "linear-gradient(90deg, transparent 0%, rgba(120,255,220,0.22) 20%, transparent 42%)",
+                  filter: "blur(10px)",
+                  transform: "skewX(-18deg)",
+                }}
+              />
+            )}
           </motion.div>
         ) : null}
 
@@ -269,7 +329,7 @@ function SponsorItem({
           <motion.div
             aria-hidden
             style={{ opacity: featuredGlow }}
-            animate={featuredFx}
+            animate={reducedFx ? undefined : featuredFx}
             initial={{ opacity: 0 }}
             className="pointer-events-none absolute -inset-10"
           >
@@ -280,25 +340,29 @@ function SponsorItem({
                   "radial-gradient(circle, rgba(255,214,110,0.40), transparent 62%)",
               }}
             />
-            <div
-              className="absolute inset-[-10px] rounded-full"
-              style={{
-                background:
-                  "conic-gradient(from 90deg, rgba(255,214,110,0.0), rgba(255,214,110,0.30), rgba(255,214,110,0.0), rgba(255,214,110,0.22), rgba(255,214,110,0.0))",
-                filter: "blur(10px)",
-                animation: "sponsorSpin 5.2s linear infinite",
-                mixBlendMode: "screen",
-              }}
-            />
-            <div
-              className="absolute inset-[-6px] rounded-full"
-              style={{
-                background:
-                  "radial-gradient(circle at 30% 35%, rgba(255,255,255,0.16), transparent 40%), radial-gradient(circle at 70% 60%, rgba(255,214,110,0.28), transparent 45%)",
-                animation: "sponsorSparkle 2.2s ease-in-out infinite",
-                mixBlendMode: "screen",
-              }}
-            />
+            {reducedFx ? null : (
+              <>
+                <div
+                  className="absolute inset-[-10px] rounded-full"
+                  style={{
+                    background:
+                      "conic-gradient(from 90deg, rgba(255,214,110,0.0), rgba(255,214,110,0.30), rgba(255,214,110,0.0), rgba(255,214,110,0.22), rgba(255,214,110,0.0))",
+                    filter: "blur(10px)",
+                    animation: "sponsorSpin 5.2s linear infinite",
+                    mixBlendMode: "screen",
+                  }}
+                />
+                <div
+                  className="absolute inset-[-6px] rounded-full"
+                  style={{
+                    background:
+                      "radial-gradient(circle at 30% 35%, rgba(255,255,255,0.16), transparent 40%), radial-gradient(circle at 70% 60%, rgba(255,214,110,0.28), transparent 45%)",
+                    animation: "sponsorSparkle 2.2s ease-in-out infinite",
+                    mixBlendMode: "screen",
+                  }}
+                />
+              </>
+            )}
 
             <motion.div
               className="absolute left-1/2 top-1/2 h-[7px] w-[7px] -translate-x-1/2 -translate-y-1/2 rounded-full"
@@ -343,21 +407,30 @@ export default function FlowingSponsors3D({
 }: {
   data: Sponsor[];
 }) {
-  const blockWidth = data.length * ITEM_WIDTH;
+  const reducedFx = useReducedFxForMobile();
+  const blockWidth = useMemo(() => data.length * ITEM_WIDTH, [data.length]);
 
-  // 🔑 arrancamos desplazados UN bloque
-  const x = useMotionValue(-blockWidth);
+  // iOS suele throttle-ar RAF en scroll / low-power: evitamos que x se vaya muy lejos.
+  const x = useMotionValue(blockWidth ? -blockWidth : 0);
 
   useAnimationFrame((_, delta) => {
-    let next = x.get() - delta * SPEED;
+    if (!blockWidth) return;
 
-    // 🔁 cuando un bloque completo salió → lo reciclamos
-    if (next <= -blockWidth * 2) {
-      next += blockWidth;
-    }
+    // clamp: suaviza cuando el browser "duerme" y vuelve con delta enorme
+    const dt = Math.min(delta, 50);
+    let next = x.get() - dt * SPEED;
+
+    const lowerBound = -blockWidth * 2;
+    const upperBound = -blockWidth;
+
+    // wrap robusto: si nos pasamos varios bloques, lo corregimos igual
+    while (next <= lowerBound) next += blockWidth;
+    while (next > upperBound) next -= blockWidth;
 
     x.set(next);
   });
+
+  if (!data?.length) return null;
 
   return (
     <div className="relative mt-14 h-[260px] overflow-hidden" style={{ perspective: "1200px" }}>
@@ -379,6 +452,7 @@ export default function FlowingSponsors3D({
               sponsor={sponsor}
               index={i + dup * data.length}
               x={x}
+              reducedFx={reducedFx}
             />
           ))
         )}
