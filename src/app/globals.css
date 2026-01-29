@@ -68,5 +68,28 @@ body {
   }
 }
 
+@keyframes sponsorSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sponsorSparkle {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+    filter: blur(0.4px);
+  }
+  50% {
+    opacity: 0.75;
+    transform: translateY(-3px);
+    filter: blur(0.9px);
+  }
+}
+
 
 

@@ -27,7 +27,7 @@ const sponsors: Sponsor[] = [
     variant: "water",
   },
   { key: "systemium", name: "Systemium", src: "/img/systemium.jpeg", variant: "tech" },
-  { key: "erdeportes", name: "ER Deportes", src: "/img/ERDeportes.jpeg", variant: "featured" },
+  { key: "erdeportes", name: "ER Deportes", src: "/img/ERDeportes.png", variant: "featured" },
 ];
 
 type SponsorsBarProps = {
@@ -386,7 +386,7 @@ function SponsorButton({
               width={220}
               height={220}
               className="h-full w-full object-contain drop-shadow-[0_10px_22px_rgba(0,0,0,0.40)]"
-              style={isEr ? { mixBlendMode: "multiply" } : undefined}
+              style={undefined}
             />
           </div>
         </motion.div>
