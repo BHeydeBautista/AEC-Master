@@ -27,6 +27,7 @@ const sponsors: Sponsor[] = [
     variant: "water",
   },
   { key: "systemium", name: "Systemium", src: "/img/systemium.jpeg", variant: "tech" },
+  { key: "deporte", name: "Deporte", src: "/img/deporte.png", variant: "featured" },
   { key: "erdeportes", name: "ER Deportes", src: "/img/ERDeportes.png", variant: "featured" },
 ];
 
@@ -64,6 +65,7 @@ function SponsorButton({
   const logoControls = useAnimationControls();
   const techOverlay = useAnimationControls();
   const featuredOverlay = useAnimationControls();
+  const featuredSheen = useAnimationControls();
   const trailDot1 = useAnimationControls();
   const trailDot2 = useAnimationControls();
   const trailDot3 = useAnimationControls();
@@ -85,6 +87,7 @@ function SponsorButton({
         logoControls.stop();
         techOverlay.stop();
         featuredOverlay.stop();
+        featuredSheen.stop();
         trailDot1.stop();
         trailDot2.stop();
         trailDot3.stop();
@@ -95,6 +98,7 @@ function SponsorButton({
         logoControls.set({ rotateY: 0 });
         techOverlay.set({ opacity: 0 });
         featuredOverlay.set({ opacity: 0 });
+        featuredSheen.set({ opacity: 0, x: "-60%" });
         trailDot1.set({ opacity: 0 });
         trailDot2.set({ opacity: 0 });
         trailDot3.set({ opacity: 0 });
@@ -155,40 +159,70 @@ function SponsorButton({
       }
 
       if (sponsor.variant === "featured") {
-        // ER: rehacer -> el logo dibuja el ∞ y la estela lo sigue.
+        const isDeporte = sponsor.key === "deporte";
+
+        // Featured: mismo toque dorado, pero con showpiece distinto para Deporte.
         await featuredOverlay.start({ opacity: 1, transition: { duration: 0.12 } });
 
-        await logoControls.start({ y: -36, scale: 1.46, rotateZ: 10, rotateY: 420, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } });
+        if (isDeporte) {
+          // Deporte: "sweep" dorado + wobble (más simple que el ∞ de ER).
+          trailDot1.set({ opacity: 0 });
+          trailDot2.set({ opacity: 0 });
+          trailDot3.set({ opacity: 0 });
 
-        const yPath = ys.map((v) => v - 36);
-        const lag = (arr: number[], n: number) => {
-          const head = Array.from({ length: n }, () => arr[0]);
-          return head.concat(arr.slice(0, Math.max(0, arr.length - n)));
-        };
-        const x1 = lag(xs, 4);
-        const y1 = lag(yPath, 4);
-        const x2 = lag(xs, 9);
-        const y2 = lag(yPath, 9);
-        const x3 = lag(xs, 14);
-        const y3 = lag(yPath, 14);
+          featuredSheen.set({ opacity: 0, x: "-60%" });
+          void featuredSheen.start({
+            opacity: [0, 0.9, 0],
+            x: ["-60%", "140%"],
+            transition: { duration: 0.95, ease: "linear" },
+          });
 
-        trailDot1.set({ opacity: 1, x: x1[0], y: y1[0] });
-        trailDot2.set({ opacity: 1, x: x2[0], y: y2[0] });
-        trailDot3.set({ opacity: 1, x: x3[0], y: y3[0] });
+          await logoControls.start({
+            y: -34,
+            scale: 1.46,
+            rotateY: 540,
+            transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] },
+          });
+          await logoControls.start({
+            rotateZ: [0, 8, -6, 0],
+            y: [-34, -40, -34],
+            transition: { duration: 0.95, ease: "easeInOut" },
+          });
+          await featuredOverlay.start({ opacity: 0, transition: { duration: 0.22 } });
+        } else {
+          // ER (y cualquier otro featured): el logo dibuja el ∞ y la estela lo sigue.
+          await logoControls.start({ y: -36, scale: 1.46, rotateZ: 10, rotateY: 420, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } });
 
-        const travel = logoControls.start({ x: xs, y: yPath, rotateZ: [10, 820], rotateY: [420, 1320], transition: { duration: 2.25, ease: "linear" } });
-        const t1 = trailDot1.start({ x: x1, y: y1, transition: { duration: 2.25, ease: "linear" } });
-        const t2 = trailDot2.start({ x: x2, y: y2, transition: { duration: 2.25, ease: "linear" } });
-        const t3 = trailDot3.start({ x: x3, y: y3, transition: { duration: 2.25, ease: "linear" } });
+          const yPath = ys.map((v) => v - 36);
+          const lag = (arr: number[], n: number) => {
+            const head = Array.from({ length: n }, () => arr[0]);
+            return head.concat(arr.slice(0, Math.max(0, arr.length - n)));
+          };
+          const x1 = lag(xs, 4);
+          const y1 = lag(yPath, 4);
+          const x2 = lag(xs, 9);
+          const y2 = lag(yPath, 9);
+          const x3 = lag(xs, 14);
+          const y3 = lag(yPath, 14);
 
-        await Promise.all([travel, t1, t2, t3]);
+          trailDot1.set({ opacity: 1, x: x1[0], y: y1[0] });
+          trailDot2.set({ opacity: 1, x: x2[0], y: y2[0] });
+          trailDot3.set({ opacity: 1, x: x3[0], y: y3[0] });
 
-        await logoControls.start({ x: 0, y: 0, scale: 1, rotateZ: 0, rotateY: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } });
+          const travel = logoControls.start({ x: xs, y: yPath, rotateZ: [10, 820], rotateY: [420, 1320], transition: { duration: 2.25, ease: "linear" } });
+          const t1 = trailDot1.start({ x: x1, y: y1, transition: { duration: 2.25, ease: "linear" } });
+          const t2 = trailDot2.start({ x: x2, y: y2, transition: { duration: 2.25, ease: "linear" } });
+          const t3 = trailDot3.start({ x: x3, y: y3, transition: { duration: 2.25, ease: "linear" } });
 
-        await featuredOverlay.start({ opacity: 0, transition: { duration: 0.2 } });
-        trailDot1.set({ opacity: 0 });
-        trailDot2.set({ opacity: 0 });
-        trailDot3.set({ opacity: 0 });
+          await Promise.all([travel, t1, t2, t3]);
+
+          await logoControls.start({ x: 0, y: 0, scale: 1, rotateZ: 0, rotateY: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } });
+
+          await featuredOverlay.start({ opacity: 0, transition: { duration: 0.2 } });
+          trailDot1.set({ opacity: 0 });
+          trailDot2.set({ opacity: 0 });
+          trailDot3.set({ opacity: 0 });
+        }
       }
 
       if (cancelled) return;
@@ -206,10 +240,12 @@ function SponsorButton({
   }, [
     isActive,
     runToken,
+    sponsor.key,
     sponsor.variant,
     logoControls,
     techOverlay,
     featuredOverlay,
+    featuredSheen,
     trailDot1,
     trailDot2,
     trailDot3,
@@ -232,7 +268,6 @@ function SponsorButton({
             ? "radial-gradient(circle, rgba(255,210,90,0.22), transparent 64%)"
             : "radial-gradient(circle, rgba(17,179,255,0.18), transparent 64%)";
 
-  const isEr = sponsor.key === "erdeportes";
   const haloMult = size <= 56 ? 1.55 : 1.85;
 
   return (
@@ -316,7 +351,7 @@ function SponsorButton({
           </motion.div>
         ) : null}
 
-        {/* featured golden infinity beam */}
+        {/* featured golden FX */}
         {sponsor.variant === "featured" ? (
           <motion.div
             aria-hidden
@@ -326,34 +361,51 @@ function SponsorButton({
           >
             <div className="absolute inset-[-18px] rounded-full bg-[radial-gradient(circle,rgba(255,214,110,0.22),transparent_60%)] blur-2xl" />
 
-            {/* trailing dots to visually attach the trail to the moving logo */}
-            <motion.div
-              className="absolute left-1/2 top-1/2 h-[8px] w-[8px] -translate-x-1/2 -translate-y-1/2 rounded-full"
-              animate={trailDot1}
-              initial={{ opacity: 0, x: 0, y: 0 }}
-              style={{
-                background: "rgba(255,214,110,0.35)",
-                filter: "blur(0.6px)",
-              }}
-            />
-            <motion.div
-              className="absolute left-1/2 top-1/2 h-[10px] w-[10px] -translate-x-1/2 -translate-y-1/2 rounded-full"
-              animate={trailDot2}
-              initial={{ opacity: 0, x: 0, y: 0 }}
-              style={{
-                background: "rgba(255,214,110,0.24)",
-                filter: "blur(1.2px)",
-              }}
-            />
-            <motion.div
-              className="absolute left-1/2 top-1/2 h-[12px] w-[12px] -translate-x-1/2 -translate-y-1/2 rounded-full"
-              animate={trailDot3}
-              initial={{ opacity: 0, x: 0, y: 0 }}
-              style={{
-                background: "rgba(255,214,110,0.16)",
-                filter: "blur(2.2px)",
-              }}
-            />
+            {sponsor.key === "deporte" ? (
+              <motion.div
+                className="absolute -left-[60%] top-0 h-full w-[120%]"
+                animate={featuredSheen}
+                initial={{ opacity: 0, x: "-60%" }}
+                style={{
+                  background:
+                    "linear-gradient(90deg, transparent 0%, rgba(255,214,110,0.22) 20%, transparent 42%)",
+                  filter: "blur(12px)",
+                  transform: "skewX(-18deg)",
+                  mixBlendMode: "screen",
+                }}
+              />
+            ) : (
+              <>
+                {/* trailing dots to visually attach the trail to the moving logo */}
+                <motion.div
+                  className="absolute left-1/2 top-1/2 h-[8px] w-[8px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+                  animate={trailDot1}
+                  initial={{ opacity: 0, x: 0, y: 0 }}
+                  style={{
+                    background: "rgba(255,214,110,0.35)",
+                    filter: "blur(0.6px)",
+                  }}
+                />
+                <motion.div
+                  className="absolute left-1/2 top-1/2 h-[10px] w-[10px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+                  animate={trailDot2}
+                  initial={{ opacity: 0, x: 0, y: 0 }}
+                  style={{
+                    background: "rgba(255,214,110,0.24)",
+                    filter: "blur(1.2px)",
+                  }}
+                />
+                <motion.div
+                  className="absolute left-1/2 top-1/2 h-[12px] w-[12px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+                  animate={trailDot3}
+                  initial={{ opacity: 0, x: 0, y: 0 }}
+                  style={{
+                    background: "rgba(255,214,110,0.16)",
+                    filter: "blur(2.2px)",
+                  }}
+                />
+              </>
+            )}
           </motion.div>
         ) : null}
 
@@ -369,13 +421,13 @@ function SponsorButton({
               width:
                 sponsor.key === "systemium"
                   ? Math.round(size * 0.98)
-                  : sponsor.key === "erdeportes"
+                  : sponsor.variant === "featured"
                     ? Math.round(size * 1.04)
                     : Math.round(size * 0.90),
               height:
                 sponsor.key === "systemium"
                   ? Math.round(size * 0.98)
-                  : sponsor.key === "erdeportes"
+                  : sponsor.variant === "featured"
                     ? Math.round(size * 1.04)
                     : Math.round(size * 0.90),
             }}
@@ -461,7 +513,13 @@ export default function SponsorsBar({ className = "" }: SponsorsBarProps) {
   const metrics = useMemo(() => {
     // Mantenerlo estable para que el dot sea consistente.
     // El row usa exactamente estos tamaños.
-    return isCompact ? { slot: 44, gap: 6, dot: 6 } : { slot: 88, gap: 14, dot: 10 };
+    if (isCompact) return { slot: 44, gap: 6, dot: 6 };
+
+    // Con 5+ sponsors, el stack horizontal se salía del contenedor (el último quedaba fuera).
+    // Bajamos el slot/gap para que entre dentro del panel.
+    if (sponsors.length > 4) return { slot: 64, gap: 10, dot: 8 };
+
+    return { slot: 88, gap: 14, dot: 10 };
   }, [isCompact]);
 
   const isVertical = isCompact;

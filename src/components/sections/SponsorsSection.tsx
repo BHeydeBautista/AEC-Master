@@ -11,6 +11,7 @@ const sponsors: Array<{
   { name: "Atlético Echagüe Club", src: "/img/aec.jpeg", variant: "club" },
   { name: "Máster", src: "/img/logomaster.png", variant: "water" },
   { name: "Systemium", src: "/img/systemium.jpeg", variant: "tech" },
+  { name: "Deporte", src: "/img/deporte.png", variant: "featured", featured: true },
   { name: "ER Deportes", src: "/img/ERDeportes.png", variant: "featured", featured: true },
 ];
 
