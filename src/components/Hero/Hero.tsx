@@ -31,32 +31,33 @@ export default function Hero() {
           </div>
 
           {/* Mobile-only: moneda (más chica) */}
-          <div className="md:hidden flex flex-col items-center w-full mt-32">
+          <div className="md:hidden flex flex-col items-center w-full mt-36">
             <FloatingIsland
               position="absolute"
               className="z-40"
               offsetX={0}
-              offsetY={80}
+              offsetY={110}
               width={340}
               height={170}
+              style={{ top: "55%" }}
             />
             <div className="h-4" />
             <MapMock
               className="z-30"
               forceFixed
               stageWidth={340}
-              stageHeight={400}
+              stageHeight={460}
               perspective={900}
               mapSize={260}
-              mapTop={180}
-              glowTop={200}
+              mapTop={210}
+              glowTop={230}
               heroRotateXStart={-56}
               heroRotateZStart={-18}
               heroScaleStart={0.58}
               heroScaleEnd={1.0}
               heroXEnd={0}
-              heroYStart={120}
-              heroYEnd={-10}
+              heroYStart={190}
+              heroYEnd={40}
             />
           </div>
 
@@ -74,7 +75,7 @@ export default function Hero() {
             <MapMock />
           </div>
 
-          <div className="pointer-events-auto absolute right-1 bottom-14 z-30 select-none sm:right-6 sm:bottom-8">
+          <div className="pointer-events-auto absolute right-3 top-36 bottom-auto z-30 select-none sm:right-6 sm:top-auto sm:bottom-8">
             <SponsorsBar />
           </div>
         </div>

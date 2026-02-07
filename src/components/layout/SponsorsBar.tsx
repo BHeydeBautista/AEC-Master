@@ -6,14 +6,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type SponsorVariant = "club" | "water" | "tech" | "default" | "featured";
 
-type Sponsor = {
+export type Sponsor = {
   key: string;
   name: string;
   src: string;
   variant: SponsorVariant;
 };
 
-const sponsors: Sponsor[] = [
+export const SPONSORS: Sponsor[] = [
   {
     key: "aec",
     name: "Atlético Echagüe Club",
@@ -25,6 +25,18 @@ const sponsors: Sponsor[] = [
     name: "Máster",
     src: "/img/logomaster.png",
     variant: "water",
+  },
+  {
+    key: "aguamarina",
+    name: "Aguamarina",
+    src: "/img/Aguamarina.png",
+    variant: "water",
+  },
+  {
+    key: "alba",
+    name: "Alba",
+    src: "/img/alba.jpeg",
+    variant: "tech",
   },
   { key: "systemium", name: "Systemium", src: "/img/systemium.jpeg", variant: "tech" },
   { key: "deporte", name: "Deporte", src: "/img/deporte.png", variant: "featured" },
@@ -470,10 +482,12 @@ export default function SponsorsBar({ className = "" }: SponsorsBarProps) {
   const [paused, setPaused] = useState(false);
   const [runToken, setRunToken] = useState(0);
   const [isCompact, setIsCompact] = useState(false);
+  const [compactFading, setCompactFading] = useState(false);
   const tokenRef = useRef(0);
   const pausedRef = useRef(false);
+  const compactTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const active = sponsors[activeIndex];
+  const active = SPONSORS[activeIndex];
 
   useEffect(() => {
     tokenRef.current += 1;
@@ -483,6 +497,12 @@ export default function SponsorsBar({ className = "" }: SponsorsBarProps) {
   useEffect(() => {
     pausedRef.current = paused;
   }, [paused]);
+
+  useEffect(() => {
+    return () => {
+      if (compactTimeoutRef.current) clearTimeout(compactTimeoutRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 640px)");
@@ -507,7 +527,19 @@ export default function SponsorsBar({ className = "" }: SponsorsBarProps) {
   const handleSequenceComplete = useCallback((token: number) => {
     if (pausedRef.current) return;
     if (token !== tokenRef.current) return;
-    setActiveIndex((i) => (i + 1) % sponsors.length);
+
+    // Mobile: mostrar 1 sponsor por vez (fade-out -> siguiente -> fade-in)
+    if (window.matchMedia && window.matchMedia("(max-width: 640px)").matches) {
+      setCompactFading(true);
+      if (compactTimeoutRef.current) clearTimeout(compactTimeoutRef.current);
+      compactTimeoutRef.current = setTimeout(() => {
+        setActiveIndex((i) => (i + 1) % SPONSORS.length);
+        setCompactFading(false);
+      }, 240);
+      return;
+    }
+
+    setActiveIndex((i) => (i + 1) % SPONSORS.length);
   }, []);
 
   const metrics = useMemo(() => {
@@ -517,7 +549,7 @@ export default function SponsorsBar({ className = "" }: SponsorsBarProps) {
 
     // Con 5+ sponsors, el stack horizontal se salía del contenedor (el último quedaba fuera).
     // Bajamos el slot/gap para que entre dentro del panel.
-    if (sponsors.length > 4) return { slot: 64, gap: 10, dot: 8 };
+    if (SPONSORS.length > 4) return { slot: 64, gap: 10, dot: 8 };
 
     return { slot: 88, gap: 14, dot: 10 };
   }, [isCompact]);
@@ -531,8 +563,43 @@ export default function SponsorsBar({ className = "" }: SponsorsBarProps) {
   }, [activeIndex, metrics]);
 
   const stackLength = useMemo(() => {
-    return sponsors.length * metrics.slot + (sponsors.length - 1) * metrics.gap;
+    return SPONSORS.length * metrics.slot + (SPONSORS.length - 1) * metrics.gap;
   }, [metrics]);
+
+  if (isCompact) {
+    const compactSize = 64;
+
+    return (
+      <motion.aside
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        className={`w-[104px] rounded-2xl bg-[#0b0b0b]/40 ring-1 ring-white/10 backdrop-blur-md px-2 py-2 shadow-[0_16px_36px_rgba(0,0,0,0.45)] ${className}`}
+      >
+        <div className="text-[10px] uppercase tracking-[0.28em] text-[#9a9593]">
+          Sponsors
+        </div>
+
+        <motion.div
+          className="mt-2 flex items-center justify-center"
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: compactFading ? 0 : 1, scale: compactFading ? 0.96 : 1 }}
+          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <SponsorButton
+            sponsor={active}
+            isActive
+            size={compactSize}
+            runToken={runToken}
+            onClick={() => setPaused((p) => !p)}
+            onSequenceComplete={handleSequenceComplete}
+          />
+        </motion.div>
+      </motion.aside>
+    );
+  }
 
   return (
     <motion.aside
@@ -598,7 +665,7 @@ export default function SponsorsBar({ className = "" }: SponsorsBarProps) {
               height: isVertical ? stackLength : metrics.slot,
             }}
           >
-            {sponsors.map((s, i) => {
+            {SPONSORS.map((s, i) => {
               const isActive = i === activeIndex;
 
               return (
