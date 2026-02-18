@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
+import { AnimatePresence, motion, useAnimationControls, useAnimationFrame, useMotionValue } from "framer-motion";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -39,6 +39,12 @@ export const SPONSORS: Sponsor[] = [
     variant: "tech",
   },
   { key: "systemium", name: "Systemium", src: "/img/systemium.jpeg", variant: "tech" },
+  {
+    key: "barbaro",
+    name: "Bárbaro Calzado & Indumentaria Deportiva",
+    src: "/img/barbaro.jpeg",
+    variant: "default",
+  },
   { key: "deporte", name: "Deporte", src: "/img/deporte.png", variant: "featured" },
   { key: "erdeportes", name: "ER Deportes", src: "/img/ERDeportes.png", variant: "featured" },
 ];
@@ -483,9 +489,12 @@ export default function SponsorsBar({ className = "" }: SponsorsBarProps) {
   const [runToken, setRunToken] = useState(0);
   const [isCompact, setIsCompact] = useState(false);
   const [compactFading, setCompactFading] = useState(false);
+  const stackAreaRef = useRef<HTMLDivElement | null>(null);
+  const [stackAreaWidth, setStackAreaWidth] = useState<number | null>(null);
   const tokenRef = useRef(0);
   const pausedRef = useRef(false);
   const compactTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const marqueeX = useMotionValue(0);
 
   const active = SPONSORS[activeIndex];
 
@@ -556,6 +565,28 @@ export default function SponsorsBar({ className = "" }: SponsorsBarProps) {
 
   const isVertical = isCompact;
 
+  useEffect(() => {
+    if (isVertical) return;
+    const el = stackAreaRef.current;
+    if (!el) return;
+
+    const update = () => {
+      const width = el.getBoundingClientRect().width;
+      setStackAreaWidth(width);
+    };
+
+    update();
+
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", update);
+      return () => window.removeEventListener("resize", update);
+    }
+
+    const ro = new ResizeObserver(() => update());
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [isVertical]);
+
   const dotOffset = useMemo(() => {
     const { slot, gap, dot } = metrics;
     const centerOffset = slot / 2 - dot / 2;
@@ -565,6 +596,50 @@ export default function SponsorsBar({ className = "" }: SponsorsBarProps) {
   const stackLength = useMemo(() => {
     return SPONSORS.length * metrics.slot + (SPONSORS.length - 1) * metrics.gap;
   }, [metrics]);
+
+  const shouldMarquee = useMemo(() => {
+    if (isVertical) return false;
+    if (!stackAreaWidth) return false;
+    return stackLength > stackAreaWidth;
+  }, [isVertical, stackAreaWidth, stackLength]);
+
+  const effectsEnabled = useMemo(() => {
+    // En marquee (cuando se está desplazando), desactivamos los showpieces para
+    // evitar que el logo se “salga” del viewport por los offsets internos.
+    // Si el usuario pausa/hover, los habilitamos para el sponsor activo.
+    if (!shouldMarquee) return true;
+    return paused;
+  }, [paused, shouldMarquee]);
+
+  const marqueeStep = useMemo(() => stackLength + metrics.gap, [stackLength, metrics.gap]);
+
+  const dotOffsetHorizontal = useMemo(() => {
+    if (isVertical) return 0;
+    if (!stackAreaWidth) return dotOffset;
+    const segment = stackAreaWidth / Math.max(1, SPONSORS.length);
+    return activeIndex * segment + segment / 2 - metrics.dot / 2;
+  }, [activeIndex, dotOffset, isVertical, metrics.dot, stackAreaWidth]);
+
+  useEffect(() => {
+    if (!shouldMarquee) {
+      marqueeX.set(0);
+      return;
+    }
+    // Reset al activar marquee para evitar saltos raros al resize.
+    marqueeX.set(0);
+  }, [marqueeX, shouldMarquee]);
+
+  useAnimationFrame((_, delta) => {
+    if (!shouldMarquee) return;
+    if (pausedRef.current) return;
+    if (!marqueeStep) return;
+
+    const dt = Math.min(delta, 50);
+    const speed = 0.04; // px/ms (~40px/s)
+    let next = marqueeX.get() - dt * speed;
+    while (next <= -marqueeStep) next += marqueeStep;
+    marqueeX.set(next);
+  });
 
   if (isCompact) {
     const compactSize = 64;
@@ -649,7 +724,11 @@ export default function SponsorsBar({ className = "" }: SponsorsBarProps) {
       </div>
 
       {/* Logos stack */}
-      <div className="relative mt-3 sm:mt-4" style={{ perspective: "950px" }}>
+      <div
+        ref={stackAreaRef}
+        className="relative mt-3 sm:mt-4 w-full overflow-hidden"
+        style={{ perspective: "950px" }}
+      >
         <div
           className="mx-auto relative"
           style={{
@@ -657,30 +736,74 @@ export default function SponsorsBar({ className = "" }: SponsorsBarProps) {
             height: isVertical ? stackLength : metrics.slot,
           }}
         >
-          <div
-            className={`absolute left-0 top-0 flex ${isVertical ? "flex-col" : "flex-row"} items-center justify-between`}
-            style={{
-              gap: metrics.gap,
-              width: isVertical ? metrics.slot : stackLength,
-              height: isVertical ? stackLength : metrics.slot,
-            }}
-          >
-            {SPONSORS.map((s, i) => {
-              const isActive = i === activeIndex;
+          {shouldMarquee && !isVertical ? (
+            <motion.div
+              className="absolute left-0 top-0 flex flex-row items-center justify-start"
+              style={{
+                x: marqueeX,
+                gap: metrics.gap,
+                width: stackLength * 2 + metrics.gap,
+                height: metrics.slot,
+                willChange: "transform",
+              }}
+            >
+              {SPONSORS.map((s, i) => {
+                const isActive = i === activeIndex;
+                return (
+                  <SponsorButton
+                    key={`${s.key}-a`}
+                    sponsor={s}
+                    isActive={effectsEnabled && isActive}
+                    size={metrics.slot}
+                    runToken={runToken}
+                    onClick={() => setActiveIndex(i)}
+                    onSequenceComplete={handleSequenceComplete}
+                  />
+                );
+              })}
+              {SPONSORS.map((s, i) => {
+                const isActive = i === activeIndex;
+                return (
+                  <SponsorButton
+                    key={`${s.key}-b`}
+                    sponsor={s}
+                    isActive={effectsEnabled && isActive}
+                    size={metrics.slot}
+                    runToken={runToken}
+                    onClick={() => setActiveIndex(i)}
+                    onSequenceComplete={handleSequenceComplete}
+                  />
+                );
+              })}
+            </motion.div>
+          ) : (
+            <div
+              className={`absolute left-0 top-0 flex ${isVertical ? "flex-col" : "flex-row"} items-center ${
+                isVertical ? "justify-between" : "justify-between"
+              }`}
+              style={{
+                gap: metrics.gap,
+                width: isVertical ? metrics.slot : stackLength,
+                height: isVertical ? stackLength : metrics.slot,
+              }}
+            >
+              {SPONSORS.map((s, i) => {
+                const isActive = i === activeIndex;
 
-              return (
-                <SponsorButton
-                  key={s.key}
-                  sponsor={s}
-                  isActive={isActive}
-                  size={metrics.slot}
-                  runToken={runToken}
-                  onClick={() => setActiveIndex(i)}
-                  onSequenceComplete={handleSequenceComplete}
-                />
-              );
-            })}
-          </div>
+                return (
+                  <SponsorButton
+                    key={s.key}
+                    sponsor={s}
+                    isActive={isActive}
+                    size={metrics.slot}
+                    runToken={runToken}
+                    onClick={() => setActiveIndex(i)}
+                    onSequenceComplete={handleSequenceComplete}
+                  />
+                );
+              })}
+            </div>
+          )}
 
           {isVertical ? (
             <div className="pointer-events-none absolute right-0 top-0 h-full w-[18px]">
@@ -713,13 +836,13 @@ export default function SponsorsBar({ className = "" }: SponsorsBarProps) {
 
         {/* Indicator (horizontal only) */}
         {!isVertical ? (
-          <div className="relative mt-2 sm:mt-3" style={{ height: 18 }}>
-            <div className="mx-auto" style={{ width: stackLength }}>
+          <div className="relative mt-2 sm:mt-3 w-full overflow-hidden" style={{ height: 18 }}>
+            <div className="mx-auto w-full">
               <div className="relative" style={{ height: 18 }}>
                 <div className="pointer-events-none absolute left-0 right-0 top-1/2 -translate-y-1/2 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                 <motion.div
                   className="absolute top-1/2 -translate-y-1/2"
-                  animate={{ x: dotOffset }}
+                  animate={{ x: dotOffsetHorizontal }}
                   transition={{ type: "spring", stiffness: 340, damping: 28 }}
                   style={{ width: metrics.dot, height: metrics.dot }}
                 >
