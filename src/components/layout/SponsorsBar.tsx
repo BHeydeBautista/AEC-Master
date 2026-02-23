@@ -33,6 +33,12 @@ export const SPONSORS: Sponsor[] = [
     variant: "water",
   },
   {
+    key: "aguanuestra",
+    name: "Agua Nuestra",
+    src: "/img/aguanuestra-logo.png",
+    variant: "water",
+  },
+  {
     key: "alba",
     name: "Alba",
     src: "/img/alba.jpeg",
