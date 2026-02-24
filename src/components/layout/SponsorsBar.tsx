@@ -57,6 +57,18 @@ export const SPONSORS: Sponsor[] = [
     src: "/img/barbaro.jpeg",
     variant: "default",
   },
+  {
+    key: "parana",
+    name: "Paraná",
+    src: "/img/parana.jpeg",
+    variant: "default",
+  },
+  {
+    key: "cillegas",
+    name: "Cillegas",
+    src: "/img/cillegas.png",
+    variant: "default",
+  },
   { key: "deporte", name: "Deporte", src: "/img/deporte.png", variant: "featured" },
   { key: "erdeportes", name: "ER Deportes", src: "/img/ERDeportes.png", variant: "featured" },
 ];
