@@ -33,9 +33,9 @@ export const SPONSORS: Sponsor[] = [
     variant: "water",
   },
   {
-    key: "aguanuestra",
-    name: "Agua Nuestra",
-    src: "/img/aguanuestra-logo.png",
+    key: "aguacimes",
+    name: "Aguacimes",
+    src: "/img/aguacimes.jpg",
     variant: "water",
   },
   {
