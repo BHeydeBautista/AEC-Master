@@ -46,6 +46,12 @@ export const SPONSORS: Sponsor[] = [
   },
   { key: "systemium", name: "Systemium", src: "/img/systemium.jpeg", variant: "tech" },
   {
+    key: "rtLogo",
+    name: "RT",
+    src: "/img/RT-Logo.png",
+    variant: "default",
+  },
+  {
     key: "sem",
     name: "SEM",
     src: "/img/LOGO%20SEM%20COMPLETO%20PNG.png",
