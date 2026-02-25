@@ -70,9 +70,15 @@ export const SPONSORS: Sponsor[] = [
     variant: "default",
   },
   {
-    key: "cillegas",
-    name: "Cillegas",
+    key: "aguanuestra",
+    name: "aguanuestra",
     src: "/img/cillegas.png",
+    variant: "default",
+  },
+  {
+    key: "villegas",
+    name: "Farmacia Villegas",
+    src: "/img/villegas.png",
     variant: "default",
   },
   { key: "deporte", name: "Deporte", src: "/img/deporte.png", variant: "featured" },
