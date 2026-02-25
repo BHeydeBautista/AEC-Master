@@ -33,12 +33,6 @@ export const SPONSORS: Sponsor[] = [
     variant: "water",
   },
   {
-    key: "aguacimes",
-    name: "Aguacimes",
-    src: "/img/aguacimes.jpg",
-    variant: "water",
-  },
-  {
     key: "alba",
     name: "Alba",
     src: "/img/alba.jpeg",
