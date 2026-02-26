@@ -1,5 +1,3 @@
-const GOOGLE_FORM_URL = "https://forms.gle/mTKnEmg75d297PyD6";
-
 export default function InscripcionSection() {
   return (
     <section
@@ -17,7 +15,7 @@ export default function InscripcionSection() {
               Sumate a la Vuelta 2026
             </h2>
             <p className="mt-4 text-[15px] leading-[1.65] text-[#8f8a87]">
-              Completá el formulario y asegurá tu lugar.
+              Las inscripciones para esta edición están finalizadas.
             </p>
 
             <div className="mt-6 grid gap-3 text-[13px] leading-[1.7] text-[#8f8a87]">
@@ -68,15 +66,14 @@ export default function InscripcionSection() {
             </div>
           </div>
 
-          <a
-            href={GOOGLE_FORM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex w-full items-center justify-center rounded-md bg-[var(--brand)]/90 hover:bg-[var(--brand)] text-white px-6 py-3 text-sm font-medium md:w-auto transition-colors duration-200"
+          <button
             type="button"
+            disabled
+            aria-disabled="true"
+            className="inline-flex w-full cursor-not-allowed items-center justify-center rounded-md bg-[var(--brand)]/40 px-6 py-3 text-center text-sm font-medium text-white/90 opacity-80 md:w-auto"
           >
-            Inscribirse
-          </a>
+            Inscripciones finalizadas. Favor contactarse con los organizadores.
+          </button>
         </div>
       </div>
     </section>

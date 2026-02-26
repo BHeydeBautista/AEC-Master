@@ -2,8 +2,6 @@
 
 import { motion } from "framer-motion";
 
-const GOOGLE_FORM_URL = "https://forms.gle/mTKnEmg75d297PyD6";
-
 export default function Navbar() {
   return (
     <header className="fixed top-0 left-0 w-full z-50">
@@ -57,16 +55,12 @@ export default function Navbar() {
             </a>
           </li>
           <li>
-            <motion.a
-              whileHover={{ y: -1 }}
-              whileTap={{ scale: 0.98 }}
-              className="pointer-events-auto inline-flex px-4 py-2 rounded-md bg-[var(--brand)] text-[#0b0b0b] font-medium shadow-[0_0_18px_rgba(17,179,255,0.35)] hover:bg-[var(--brand-600)] transition"
-              href={GOOGLE_FORM_URL}
-              target="_blank"
-              rel="noreferrer"
+            <span
+              aria-disabled="true"
+              className="pointer-events-none inline-flex px-4 py-2 rounded-md bg-[var(--brand)]/35 text-white/90 font-medium cursor-not-allowed"
             >
-              Inscribirme
-            </motion.a>
+              Inscripciones finalizadas
+            </span>
           </li>
         </ul>
 
@@ -96,14 +90,12 @@ export default function Navbar() {
               >
                 Inscripción
               </a>
-              <a
-                className="block px-4 py-3 text-sm font-medium text-[#0b0b0b] bg-[var(--brand)] hover:bg-[var(--brand-600)] transition"
-                href={GOOGLE_FORM_URL}
-                target="_blank"
-                rel="noreferrer"
+              <span
+                aria-disabled="true"
+                className="block px-4 py-3 text-sm font-medium text-white/90 bg-[var(--brand)]/35 cursor-not-allowed"
               >
-                Inscribirme
-              </a>
+                Inscripciones finalizadas
+              </span>
             </div>
           </details>
         </div>
